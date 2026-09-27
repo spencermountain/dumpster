@@ -1,5 +1,5 @@
 {
-  "name": "dumpster",
+  "name": "char-out",
   "version": "0.0.1",
   "description": "",
   "minimumReleaseAge": "1 day",
@@ -13,7 +13,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/spencermountain/dumpster-lib.git"
+    "url": "https://github.com/spencermountain/out-of-character.git"
   },
   "files": [
     "src",
@@ -31,7 +31,7 @@
     "printWidth": 100
   },
   "dependencies": {
-    "dumpster-dip": "^2.0.0"
+    "out-of-character": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "10.11.0",

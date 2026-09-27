@@ -1,1 +1,1 @@
-placeholder for new dumpster-dive library
+placeholder for alternative name for out-of-character library

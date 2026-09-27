@@ -1,3 +1,3 @@
-import lib from 'dumpster-dip'
+import lib from 'out-of-character'
 
 export default lib
