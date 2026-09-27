@@ -1,62 +1,42 @@
 {
-  "name": "dumpster-lib",
-  "version": "0.1.0",
-  "description": "shared library for parsing wikimedia dumps",
-  "main": "./src/index.js",
-  "types": "./types/index.d.ts",
-  "type": "module",
-  "bin": {
-    "dumpster": "./src/cli/bin.js"
-  },
-  "sideEffects": false,
-  "author": "Spencer Kelly <spencermountain@gmail.com> (https://spencermountain.dev)",
+  "name": "dumpster",
+  "version": "0.0.1",
+  "description": "",
+  "minimumReleaseAge": "1 day",
   "scripts": {
-    "test": "node tests/index.js",
-    "watch": "node ./scratch.js",
+    "build": "rollup -c --silent",
+    "test": "tape \"tests/*.test.js\" | tap-dancer",
+    "watch": "node --watch scratch.js",
     "lint": "eslint ."
   },
-  "repository": "github:spencermountain/dumpster-lib",
+  "type": "module",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spencermountain/dumpster-lib.git"
+  },
+  "files": [
+    "src",
+    "builds",
+    "types"
+  ],
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "prettier": {
     "trailingComma": "none",
+    "tabWidth": 2,
     "semi": false,
     "singleQuote": true,
     "printWidth": 100
   },
   "dependencies": {
-    "@inkjs/ui": "^2.0.0",
-    "commander": "^15.0.0",
-    "html-entities": "2.6.0",
-    "ink": "^7.1.1",
-    "react": "^19.2.0",
-    "wtf-plugin-classify": "2.1.0",
-    "wtf-plugin-debug": "^0.0.1",
-    "wtf-plugin-html": "1.0.0",
-    "wtf-plugin-i18n": "1.0.2",
-    "wtf-plugin-markdown": "1.0.1",
-    "wtf-plugin-nsfw": "^1.0.0",
-    "wtf-plugin-summary": "1.0.0",
-    "wtf_wikipedia": "10.4.2"
-  },
-  "license": "MIT",
-  "exports": {
-    ".": {
-      "types": "./types/index.d.ts",
-      "default": "./src/index.js"
-    },
-    "./cli": {
-      "types": "./types/cli.d.ts",
-      "default": "./src/cli/index.js"
-    },
-    "./fixture": {
-      "types": "./types/fixture.d.ts",
-      "default": "./src/lib/fixture.js"
-    }
+    "dumpster-dip": "^2.0.0"
   },
   "devDependencies": {
-    "tap-dancer": "^0.4.0",
+    "eslint": "10.11.0",
+    "tap-dancer": "0.4.0",
     "tape": "^5.10.2"
-  }
+  },
+  "license": "MIT"
 }
