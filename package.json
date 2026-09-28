@@ -1,22 +1,14 @@
 {
-  "name": "dumpster-lib",
-  "version": "0.1.0",
-  "description": "shared library for parsing wikimedia dumps",
-  "main": "./src/index.js",
-  "types": "./types/index.d.ts",
+  "name": "dumpster-workspace",
+  "private": true,
   "type": "module",
-  "bin": {
-    "dumpster": "./src/cli/bin.js"
-  },
-  "sideEffects": false,
-  "author": "Spencer Kelly <spencermountain@gmail.com> (https://spencermountain.dev)",
+  "packageManager": "pnpm@11.5.0",
   "scripts": {
-    "test": "node tests/index.js",
-    "watch": "node ./scratch.js",
-    "dialogue": "node dialogue/components/_scratch.js",
+    "test": "pnpm --filter ./pool test",
+    "watch": "pnpm --filter ./dialogue watch",
+    "dialogue": "pnpm --filter ./dialogue watch",
     "lint": "eslint ."
   },
-  "repository": "github:spencermountain/dumpster-lib",
   "engines": {
     "node": ">=20"
   },
@@ -28,37 +20,12 @@
   },
   "dependencies": {
     "@inkjs/ui": "^2.0.0",
-    "commander": "^15.0.0",
-    "html-entities": "2.6.0",
     "ink": "^7.1.1",
     "react": "^19.2.0",
-    "wtf-plugin-classify": "2.1.0",
-    "wtf-plugin-debug": "^0.0.1",
-    "wtf-plugin-html": "1.0.0",
-    "wtf-plugin-i18n": "1.0.2",
-    "wtf-plugin-markdown": "1.0.1",
-    "wtf-plugin-nsfw": "^1.0.0",
-    "wtf-plugin-summary": "1.0.0",
-    "wtf_wikipedia": "10.4.2"
-  },
-  "license": "MIT",
-  "exports": {
-    ".": {
-      "types": "./types/index.d.ts",
-      "default": "./src/index.js"
-    },
-    "./cli": {
-      "types": "./types/cli.d.ts",
-      "default": "./src/cli/index.js"
-    },
-    "./fixture": {
-      "types": "./types/fixture.d.ts",
-      "default": "./src/lib/fixture.js"
-    }
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
-    "tap-dancer": "^0.4.0",
-    "tape": "^5.10.2",
-    "tsx": "^4.23.15"
+    "eslint": "^9.39.0",
+    "eslint-plugin-react": "^7.37.5"
   }
 }

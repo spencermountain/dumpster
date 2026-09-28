@@ -1,7 +1,14 @@
+import react from 'eslint-plugin-react'
+
 export default [
+  { ignores: ['**/builds/**', '**/scratch.js', '**/tests/**'] },
   {
-    ignores: ['**/builds/*', './scratch.js', './tests/*'],
+    files: ['**/*.{js,jsx}'],
+    languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
+    plugins: { react },
     rules: {
+      'react/jsx-uses-react': 'error',
+      'react/jsx-uses-vars': 'error',
       'regexp/no-misleading-capturing-group': 0, //todo remove this
       'regexp/no-super-linear-backtracking': 0, //todo remove this, too
       'comma-dangle': [1, 'only-multiline'],

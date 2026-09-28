@@ -1,0 +1,8 @@
+packages:
+  - dialogue
+  - pageviews
+  - pool
+
+allowBuilds:
+  esbuild: true
+  wtf_wikipedia: true
