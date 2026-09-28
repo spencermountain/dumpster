@@ -3,15 +3,15 @@ import React from 'react'
 import { Box, Text, render, useApp, useInput, useWindowSize } from 'ink'
 import Page from './components/Page/Page.jsx'
 import preserveScrollback from './lib/preserveScrollback.js'
-// For an isolated screen instead, use Fullscreen with renderFullscreen:
-// import Fullscreen, { renderFullscreen } from './components/Fullscreen.jsx'
 // import { Box, Text } from 'ink'
 // import { RowSpread } from './components/_lib.jsx'
-import Colors from './components/misc/colors.jsx'
+import Colors from './components/misc/Colors.jsx'
 import Chart from './components/misc/Chart.jsx'
 import Interaction from './components/misc/Interaction.jsx'
 import SimpleSelect from './components/Select/Simple.jsx'
-// import Table from './components/Table/Index.jsx'
+import Table from './components/Table/src/Index.jsx'
+import Spinner from './components/misc/Spinner.jsx'
+import Input from './components/misc/Input.jsx'
 
 const choices = [
   { label: 'Plain text', id: 'text', description: 'Just the article text' },
@@ -42,21 +42,13 @@ function Scratch() {
       <Box padding={1} flexDirection="column">
         <Interaction />
         {/* <Colors />*/}
+        <Spinner />
+        <Input />
         <SimpleSelect title={'simple-select'} description={'try this out'} choices={choices} />
         <Chart />
       </Box>
     </Page>
   )
-  // return (
-  //   <Box flexDirection="column" gap={1}>
-  //     <RowSpread >
-  //       <Text backgroundColor="green" bold padding={2} color="white">dumpster-dive</Text>
-  //       <Text>hello</Text>
-  //     </RowSpread>
-  //     <Colors />
-  //     <Chart/>
-  //   </Box>
-  // )
 }
 
 const app = render(<Scratch />, opts)
