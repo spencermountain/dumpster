@@ -1,0 +1,16 @@
+{
+  "name": "@dumpster/playground",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Ink JSX components and playground",
+  "exports": "./components/index.js",
+  "scripts": {
+    "watch": "node --watch --watch-preserve-output --import tsx scratch.jsx"
+  },
+  "dependencies": {
+    "@pppp606/ink-chart": "^0.2.8",
+    "ink": "^7.1.1",
+    "react": "^19.2.0"
+  }
+}
