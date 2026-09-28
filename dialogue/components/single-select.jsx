@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
-import { Box, Text, render, useApp, useInput } from 'ink'
+import { Box, Text, useApp, useInput } from 'ink'
+import { Row } from './_lib.jsx'
 
 function SingleSelect({ title, description, choices, clearPrompt }) {
   const [selected, setSelected] = useState(0)
@@ -31,10 +32,10 @@ function SingleSelect({ title, description, choices, clearPrompt }) {
 
   return (
     <Box flexDirection="column" paddingTop={2} paddingBottom={2} paddingLeft={1}>
-      <Box flexDirection="row">
+      <Row>
         <Text bold>{title}</Text>
         <Text dimColor>{description || ''}</Text>
-      </Box>
+      </Row>
       <Box
         flexDirection="column"
         borderStyle="single"
@@ -55,26 +56,23 @@ function SingleSelect({ title, description, choices, clearPrompt }) {
   )
 }
 
-const singleSelect = async function ({ title, description, choices }) {
-  if (!Array.isArray(choices) || choices.length === 0) {
-    throw new Error('singleSelect requires at least one choice')
-  }
+// const singleSelect = async function ({ title, description, choices }) {
+//   const app = render(
+//     <SingleSelect
+//       title={title}
+//       description={description}
+//       choices={choices}
+//       clearPrompt={() => app.clear()}
+//     />,
+//     { exitOnCtrlC: true }
+//   )
+//   try {
+//     return await app.waitUntilExit()
+//   } finally {
+//     app.unmount()
+//     app.cleanup()
+//   }
+// }
 
-  const app = render(
-    <SingleSelect
-      title={title}
-      description={description}
-      choices={choices}
-      clearPrompt={() => app.clear()}
-    />,
-    { exitOnCtrlC: true }
-  )
-  try {
-    return await app.waitUntilExit()
-  } finally {
-    app.unmount()
-    app.cleanup()
-  }
-}
-
-export default singleSelect
+// export default singleSelect
+export default SingleSelect
