@@ -6,7 +6,7 @@
   "scripts": {
     "test": "pnpm --filter ./pool test",
     "watch": "pnpm --filter ./dialogue watch",
-    "dialogue": "pnpm --filter ./dialogue watch",
+    "playground": "pnpm --filter ./playground watch",
     "lint": "eslint ."
   },
   "engines": {
