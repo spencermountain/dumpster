@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { Box, Text, useApp, useInput } from 'ink'
-import { Row } from './_lib.jsx'
+import { Row } from '../_lib.jsx'
 
-function SingleSelect({ title, description, choices, clearPrompt }) {
+const Simple = function ({ title, description, choices, clearPrompt }) {
   const [selected, setSelected] = useState(0)
   const search = useRef({ prefix: '', updatedAt: 0 })
   const { exit } = useApp()
@@ -33,7 +33,7 @@ function SingleSelect({ title, description, choices, clearPrompt }) {
   return (
     <Box flexDirection="column" paddingTop={2} paddingBottom={2} paddingLeft={1}>
       <Row>
-        <Text bold>{title}</Text>
+        <Text bold>{title || ''}</Text>
         <Text dimColor>{description || ''}</Text>
       </Row>
       <Box
@@ -56,23 +56,5 @@ function SingleSelect({ title, description, choices, clearPrompt }) {
   )
 }
 
-// const singleSelect = async function ({ title, description, choices }) {
-//   const app = render(
-//     <SingleSelect
-//       title={title}
-//       description={description}
-//       choices={choices}
-//       clearPrompt={() => app.clear()}
-//     />,
-//     { exitOnCtrlC: true }
-//   )
-//   try {
-//     return await app.waitUntilExit()
-//   } finally {
-//     app.unmount()
-//     app.cleanup()
-//   }
-// }
-
 // export default singleSelect
-export default SingleSelect
+export default Simple

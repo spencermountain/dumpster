@@ -1,7 +1,8 @@
 // Edit this file to try Ink components. From the workspace root, run: pnpm dialogue
 import React from 'react'
-import { Box, Text, useApp, useInput, useWindowSize } from 'ink'
-import Page, { renderPage } from './components/Page/Page.jsx'
+import { Box, Text, render, useApp, useInput, useWindowSize } from 'ink'
+import Page from './components/Page/Page.jsx'
+import preserveScrollback from './lib/preserveScrollback.js'
 // For an isolated screen instead, use Fullscreen with renderFullscreen:
 // import Fullscreen, { renderFullscreen } from './components/Fullscreen.jsx'
 // import { Box, Text } from 'ink'
@@ -9,33 +10,18 @@ import Page, { renderPage } from './components/Page/Page.jsx'
 import Colors from './components/misc/colors.jsx'
 import Chart from './components/misc/Chart.jsx'
 import Interaction from './components/misc/Interaction.jsx'
-// import SimpleSelect from './components/SimpleSelect.jsx'
+import SimpleSelect from './components/Select/Simple.jsx'
 // import Table from './components/Table/Index.jsx'
 
-
-
-
-// import SingleSelect from './components/single-select.jsx'
-// import Spinner from './components/Spinner.jsx'
-// await singleSelect({
-//   title: 'Choose an output format',
-//   description: 'Select the format for your Wikipedia dump.',
-//   choices: [
-//     { label: 'Plain text', id: 'text', description: 'Just the article text' },
-//     { label: 'Markdown', id: 'markdown', description: 'Text with formatting' },
-//     { label: 'HTML', id: 'html', description: 'Ready for a web page' }
-//   ]
-// })
-
-// <SingleSelect
-//   title={title}
-//   description={description}
-//   choices={choices}
-//   clearPrompt={() => app.clear()}
-// />
-
+const choices = [
+  { label: 'Plain text', id: 'text', description: 'Just the article text' },
+  { label: 'Markdown', id: 'markdown', description: 'Text with formatting' },
+  { label: 'HTML', id: 'html', description: 'Ready for a web page' }
+]
 const opts = {
-  exitOnCtrlC: true
+  exitOnCtrlC: true,
+  // Optional workaround for Ink's erase-scrollback behavior during resize/overflow.
+  stdout: preserveScrollback(process.stdout)
 }
 
 function Scratch() {
@@ -55,10 +41,8 @@ function Scratch() {
     >
       <Box padding={1} flexDirection="column">
         <Interaction />
-        <Colors />
-        <Colors />
-        <Colors />
-        <Colors />
+        {/* <Colors />*/}
+        <SimpleSelect title={'simple-select'} description={'try this out'} choices={choices} />
         <Chart />
       </Box>
     </Page>
@@ -75,7 +59,7 @@ function Scratch() {
   // )
 }
 
-const app = renderPage(<Scratch />, opts)
+const app = render(<Scratch />, opts)
 try {
   await app.waitUntilExit()
 } finally {

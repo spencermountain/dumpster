@@ -4,10 +4,10 @@ import { PassThrough } from 'node:stream'
 import { setTimeout as delay } from 'node:timers/promises'
 import { stripVTControlCharacters } from 'node:util'
 import React from 'react'
-import { measureElement, renderToString } from 'ink'
+import { measureElement, render, renderToString } from 'ink'
 import Table from '../src/Index.jsx'
-import Page, { renderPage } from '../components/Page.jsx'
-import Fullscreen, { renderFullscreen } from '../components/Fullscreen.jsx'
+import Page from '../../Page/Page.jsx'
+import Fullscreen, { renderFullscreen } from '../../Page/Fullscreen.jsx'
 
 const cols = [
   { label: 'Name', id: 'name', sortable: true },
@@ -42,7 +42,7 @@ async function setup(t, fullscreen = false, columns = cols) {
     }
   })
   const Component = fullscreen ? Fullscreen : Page
-  const mount = fullscreen ? renderFullscreen : renderPage
+  const mount = fullscreen ? renderFullscreen : render
   const app = mount(
     <Component ref={ref} minHeight={12} navLeft="Nav" footerLeft="Footer">
       <Table data={data} cols={columns} />
