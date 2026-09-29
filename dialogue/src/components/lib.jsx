@@ -17,7 +17,7 @@ const Col = ({ children }) => {
   )
 }
 
-const Show = ({ if: condition, fallback = null, children }) => {
+const Show = ({ condition, fallback = null, children }) => {
   return condition ? <>{children}</> : <>{fallback}</>
 }
 
