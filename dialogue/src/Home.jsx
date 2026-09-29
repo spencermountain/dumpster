@@ -34,9 +34,12 @@ const App = function ({ clear }) {
 
   useEffect(() => {
     const complete = () => {
-      if (store.livePage || completed.current) return
+      if (store.livePage || completed.current) {
+        return
+      }
       completed.current = true
-      finish(structuredClone(snapshot(store.userState)))
+      const output = structuredClone(snapshot(store.userState))
+      finish(output)
     }
     const unsubscribe = subscribe(store, complete)
     complete()
@@ -47,7 +50,9 @@ const App = function ({ clear }) {
   return (
     <Box width="100%" overflow="hidden" flexDirection="column">
       <Box flexDirection="column" flexGrow={1} flexShrink={1} minHeight={0} overflow="hidden">
-        <Text>hello! {livePage} </Text>
+        <Text bold underline>
+          {livePage}
+        </Text>
         <Show if={PageComponent} fallback={<Text dimColor>{'Error: no page ' + livePage}</Text>}>
           <PageComponent />
         </Show>
