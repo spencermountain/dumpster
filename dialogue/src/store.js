@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { proxy } from 'valtio'
 
 const defaultState = {
   project: null, // wikipedia, wiktionary
@@ -11,11 +11,15 @@ const defaultState = {
   runtime: null //workers, chunks, resume
 }
 
-export const useStore = create((set, get) => ({
+export const store = proxy({
   userState: { ...defaultState },
   page: 0,
   // getters
-  doublePage: () => get().page * 2,
+  get doublePage() {
+    return this.page * 2
+  },
   // actions
-  nextPage: () => set((state) => ({ page: state.page + 1 }))
-}))
+  nextPage: () => {
+    store.page += 1
+  }
+})

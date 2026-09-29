@@ -12,15 +12,12 @@
     "watch3": "node --watch --watch-preserve-output --import tsx scratch.jsx"
   },
   "dependencies": {
-    "@inkjs/ui": "^2.0.0",
     "@pppp606/ink-chart": "^0.2.8",
     "ink": "^7.1.1",
     "ink-link": "^5.0.0",
     "ink-scroll-list": "^0.5.0",
     "ink-spinner": "^5.0.0",
-    "ink-stepper": "^0.2.3",
-    "ink-text-input": "^6.0.0",
     "react": "^19.2.0",
-    "zustand": "^5.0.15"
+    "valtio": "^2.3.2"
   }
 }
