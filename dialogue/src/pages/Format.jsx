@@ -4,17 +4,17 @@ import { store } from '../store.js'
 import SinglePick from '../components/SinglePick.jsx'
 
 const list = [
-  { label: 'Filesystem', id: 'filesystem' },
-  { label: 'DuckDb', id: 'duckdb' },
-  { label: 'Sqlite', id: 'sqlite' },
-  { label: 'None', id: 'none' }
+  { label: 'Json', id: 'json' },
+  { label: 'Text', id: 'text' },
+  { label: 'Html', id: 'html' },
+  { label: 'Markdown', id: 'markdown' }
 ]
 
 const Page = () => {
   return (
     <Box flexDirection="column">
-      <Text underline>Writer</Text>
-      <SinglePick list={list} onSelect={(id) => (store.userState.writer = id)} />
+      <Text underline>Format</Text>
+      <SinglePick list={list} onSelect={(id) => (store.userState.format = id)} />
     </Box>
   )
 }

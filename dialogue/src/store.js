@@ -4,9 +4,9 @@ const defaultState = {
   project: null, // wikipedia, wiktionary
   lang: null,
   source: null, // meta.wikimedia.org, local
-  writer: null // sqlite, duckdb
+  writer: null, // sqlite, duckdb
   // include: null, // {disambiguation, redirects}
-  // format: null, // json, html
+  format: null // json, html
   // properties: null, // {summary, classification}
   // runtime: null //workers, chunks, resume
 }

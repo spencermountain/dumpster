@@ -10,7 +10,8 @@ const list = langs.map((obj) => {
     id: obj.id
   }
 })
-const Project = () => {
+
+const Page = () => {
   return (
     <Box flexDirection="column">
       <Text underline>Lang</Text>
@@ -19,4 +20,4 @@ const Project = () => {
   )
 }
 
-export default Project
+export default Page

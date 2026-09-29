@@ -8,12 +8,14 @@ import Lang from './pages/Lang.jsx'
 import Project from './pages/Project.jsx'
 import Source from './pages/Source.jsx'
 import Writer from './pages/Writer.jsx'
+import Format from './pages/Format.jsx'
 
 const pages = {
   project: Project,
   lang: Lang,
   source: Source,
-  writer: Writer
+  writer: Writer,
+  format: Format
 }
 
 const App = function ({ clear }) {

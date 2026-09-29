@@ -11,7 +11,7 @@ const list = projects.map((obj) => {
   }
 })
 
-const Project = () => {
+const Page = () => {
   return (
     <Box flexDirection="column">
       <Text underline>Project</Text>
@@ -20,4 +20,4 @@ const Project = () => {
   )
 }
 
-export default Project
+export default Page

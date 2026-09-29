@@ -9,7 +9,7 @@ const list = [
   { label: 'Third-party Wiki', id: 'third-party' }
 ]
 
-const Project = () => {
+const Page = () => {
   return (
     <Box flexDirection="column">
       <Text underline>Source</Text>
@@ -18,4 +18,4 @@ const Project = () => {
   )
 }
 
-export default Project
+export default Page
