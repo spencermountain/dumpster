@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { Box, Text, useApp } from 'ink'
 import { snapshot, subscribe, useSnapshot } from 'valtio'
 import { store } from './store.js'
@@ -6,32 +6,47 @@ import useKeyboard from './keyboard.js'
 import { Show } from './components/lib.jsx'
 import Lang from './pages/Lang.jsx'
 import Project from './pages/Project.jsx'
+import Source from './pages/Source.jsx'
+import Writer from './pages/Writer.jsx'
 
 const pages = {
   project: Project,
-  lang: Lang
+  lang: Lang,
+  source: Source,
+  writer: Writer
 }
 
-const App = function ({}) {
+const App = function ({ clear }) {
   const { livePage } = useSnapshot(store)
   const { exit } = useApp()
-  const PageComponent = pages[livePage]
-  useKeyboard()
-
-  const unsubscribe = subscribe(store, () => {
-    let state = structuredClone(snapshot(store.userState))
-    if (!store.livePage) {
-      unsubscribe()
+  const completed = useRef(false)
+  const finish = useCallback(
+    (state) => {
+      clear?.()
       exit(state)
+    },
+    [clear, exit]
+  )
+  const PageComponent = pages[livePage]
+  useKeyboard(finish)
+
+  useEffect(() => {
+    const complete = () => {
+      if (store.livePage || completed.current) return
+      completed.current = true
+      finish(structuredClone(snapshot(store.userState)))
     }
-  })
+    const unsubscribe = subscribe(store, complete)
+    complete()
+    return unsubscribe
+  }, [finish])
 
   if (!livePage) return null
   return (
     <Box width="100%" overflow="hidden" flexDirection="column">
       <Box flexDirection="column" flexGrow={1} flexShrink={1} minHeight={0} overflow="hidden">
-        <Text>page {livePage} </Text>
-        <Show if={PageComponent} fallback={<Text dimColor>done</Text>}>
+        <Text>hello! {livePage} </Text>
+        <Show if={PageComponent} fallback={<Text dimColor>{'Error: no page ' + livePage}</Text>}>
           <PageComponent />
         </Show>
       </Box>

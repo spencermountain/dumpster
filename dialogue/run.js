@@ -1,4 +1,6 @@
-import { register } from 'tsx/esm/api'
+const isProd = process.argv.includes('--production')
+const entry = isProd ? './builds/app.js' : './dev.js'
+const { default: dialogue } = await import(entry)
 
-register()
-await import('./app.js')
+let output = await dialogue()
+console.log(isProd ? 'prod' : 'dev', output)

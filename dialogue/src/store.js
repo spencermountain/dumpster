@@ -2,9 +2,9 @@ import { proxy } from 'valtio'
 
 const defaultState = {
   project: null, // wikipedia, wiktionary
-  lang: null
-  // source: null, // wikimedia, local
-  // destination: null, // sqlite, duckdb
+  lang: null,
+  source: null, // meta.wikimedia.org, local
+  writer: null // sqlite, duckdb
   // include: null, // {disambiguation, redirects}
   // format: null, // json, html
   // properties: null, // {summary, classification}
@@ -27,3 +27,8 @@ export const store = proxy({
     store.page += 1
   }
 })
+
+export const resetStore = (initialState = {}) => {
+  store.userState = { ...defaultState, ...structuredClone(initialState) }
+  store.page = 0
+}
