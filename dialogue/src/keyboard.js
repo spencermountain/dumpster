@@ -1,7 +1,7 @@
 import { useApp, useInput, useStdin } from 'ink'
 import { store } from './store.js'
 
-const useKeyboard = function (clearPrompt) {
+const useKeyboard = function () {
   const { exit } = useApp()
   const { isRawModeSupported } = useStdin()
   useInput(
@@ -10,7 +10,6 @@ const useKeyboard = function (clearPrompt) {
         store.nextPage()
       }
       if (key.escape) {
-        clearPrompt?.()
         exit()
       }
     },

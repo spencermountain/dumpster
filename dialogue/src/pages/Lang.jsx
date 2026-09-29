@@ -4,16 +4,16 @@ import { store } from '../store.js'
 import SinglePick from '../components/SinglePick.jsx'
 
 const list = [
-  { id: 1, label: 'One' },
-  { id: 2, label: 'Two' },
-  { id: 3, label: 'Three' }
+  { id: 'fr', label: 'fr' },
+  { id: 'en', label: 'en' },
+  { id: 'es', label: 'es' }
 ]
 
 const Project = () => {
   return (
     <Box flexDirection="column">
-      <Text underline>Project</Text>
-      <SinglePick list={list} onSelect={(id) => (store.userState.project = id)} />
+      <Text underline>Lang</Text>
+      <SinglePick list={list} onSelect={(id) => (store.userState.lang = id)} />
     </Box>
   )
 }

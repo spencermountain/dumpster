@@ -2,14 +2,15 @@ import { proxy } from 'valtio'
 
 const defaultState = {
   project: null, // wikipedia, wiktionary
-  lang: true,
-  source: true, // wikimedia, local
-  destination: null, // sqlite, duckdb
-  include: null, // {disambiguation, redirects}
-  format: null, // json, html
-  properties: null, // {summary, classification}
-  runtime: null //workers, chunks, resume
+  lang: null
+  // source: null, // wikimedia, local
+  // destination: null, // sqlite, duckdb
+  // include: null, // {disambiguation, redirects}
+  // format: null, // json, html
+  // properties: null, // {summary, classification}
+  // runtime: null //workers, chunks, resume
 }
+const order = Object.keys(defaultState)
 
 export const store = proxy({
   userState: { ...defaultState },
@@ -17,6 +18,9 @@ export const store = proxy({
   // getters
   get doublePage() {
     return this.page * 2
+  },
+  get livePage() {
+    return order.find((key) => this.userState[key] === null)
   },
   // actions
   nextPage: () => {
