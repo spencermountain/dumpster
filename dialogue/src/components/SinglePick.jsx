@@ -68,10 +68,10 @@
                   {obj.label}
                 </Text>
                 <Text color="grey">- {obj.description || ''}</Text>
-
-                {/* <Show condition={i === selectedIndex} fallback={<Text color="grey">{'  '}</Text>}>
+                {/* <Show condition={obj.isDefault}>
                   <Text color="grey">{' ❯'}</Text>
                 </Show>*/}
+
               </Box>
             ))}
           </ScrollList>
