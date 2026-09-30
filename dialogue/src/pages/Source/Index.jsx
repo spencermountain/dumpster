@@ -4,9 +4,13 @@ import { store } from '../../store.js'
 import SinglePick from '../../components/SinglePick.jsx'
 
 const list = [
-  { label: 'Download from wikimedia.org', id: 'wikimedia' },
-  { label: 'Local Dump File', id: 'local', description: 'Use a local .gz file' },
-  { label: 'Third-party Download', id: 'third-party' }
+  { label: '⬇ Download', id: 'wikimedia', description: 'from wikimedia.org', isDefault: true },
+  { label: '📦 Local Dump', id: 'local', description: 'Use a local .gz file' },
+  {
+    label: 'Third-party Download ↗',
+    id: 'third-party',
+    description: 'd/l from another server'
+  }
 ]
 
 const Page = () => {

@@ -4,10 +4,15 @@ import { store } from '../../store.js'
 import SinglePick from '../../components/SinglePick.jsx'
 
 const list = [
-  { label: 'Filesystem', id: 'filesystem', description: 'Pages as individual files' },
-  { label: 'DuckDb', id: 'duckdb' },
-  { label: 'Sqlite', id: 'sqlite' },
-  { label: 'None', id: 'none' }
+  {
+    label: 'Filesystem',
+    id: 'filesystem',
+    description: 'Pages as individual files',
+    isDefault: true
+  },
+  { label: 'DuckDb', id: 'duckdb', description: 'Pages as rows in DuckDb' },
+  { label: 'Sqlite', id: 'sqlite', description: 'Pages as rows in Sqlite' },
+  { label: 'None', id: 'none', description: 'Console-only' }
 ]
 
 const Page = () => {

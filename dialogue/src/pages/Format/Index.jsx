@@ -4,12 +4,12 @@ import { store } from '../../store.js'
 import SinglePick from '../../components/SinglePick.jsx'
 
 const list = [
-  { label: 'Json-sm', id: 'json-sm' },
-  { label: 'Json-md', id: 'json-md', isDefault: true },
-  { label: 'Json-lg', id: 'json-lg' },
-  { label: 'Text', id: 'text' },
-  { label: 'Html', id: 'html' },
-  { label: 'Markdown', id: 'markdown' }
+  { label: 'Json-sm', id: 'json-sm', description: 'Smaller json' },
+  { label: 'Json-md', id: 'json-md', description: 'Medium json', isDefault: true },
+  { label: 'Json-lg', id: 'json-lg', description: 'Larger json' },
+  { label: 'Text', id: 'text', description: 'Cleaned plaintext' },
+  { label: 'Html', id: 'html', description: 'Converted to HTML' },
+  { label: 'Markdown', id: 'markdown', description: 'Converted to Markdown' }
 ]
 
 const Page = () => {

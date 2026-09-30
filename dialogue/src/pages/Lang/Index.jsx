@@ -3,6 +3,7 @@ import { Box, Text } from 'ink'
 import { store } from '../../store.js'
 import SinglePick from '../../components/SinglePick.jsx'
 import langs from './langs.js'
+import { titleCase } from './titleCase.jsx'
 
 const round = (num) => {
   if (num > 1_000_000) {
@@ -25,14 +26,19 @@ const Page = () => {
     return {
       id: obj.id,
       label: obj.id,
-      description: desc
+      description: desc,
+      isDefault: obj.id === 'en'
     }
   })
+  let desc = 'Which language ' + titleCase(store.userState.project) + ''
+  // if (store.userState.project !== 'wikipedia') {
+  // desc = 'Not all languages may be available for ' + store.userState.project
+  // }
   return (
     <Box flexDirection="column">
       <SinglePick
         title="Language"
-        description="Not all projects have all languages"
+        description={desc}
         list={list}
         onSelect={(id) => (store.userState.lang = id)}
       />
