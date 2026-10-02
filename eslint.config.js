@@ -18,7 +18,7 @@ export default [
       'consistent-return': 1,
       'no-bitwise': 1,
       'no-empty': 1,
-      'no-console': 1,
+      'no-console': 'off',
       'no-duplicate-imports': 1,
       'no-eval': 2,
       'no-implied-eval': 2,

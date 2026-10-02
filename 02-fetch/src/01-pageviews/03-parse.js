@@ -1,7 +1,7 @@
-import sh from 'shelljs'
+import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 const tsvOut = './pageviews.tsv'
-import { dim } from '../_fns.js'
+const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
 
 const round = n => Math.round(n * 10) / 10
 
@@ -15,7 +15,19 @@ const parsePageviews = function (file, lang, project) {
 
   //filter large pageview file down to our project-lang only
   console.log(dim(`    parsing pageview counts`))
-  sh.exec(`grep '^${lang}.${project} .* desktop ' ${file} > ${tsvOut}`)
+  const output = fs.openSync(tsvOut, 'w')
+  try {
+    execFileSync('grep', ['--', `^${lang}.${project} .* desktop `, file], {
+      stdio: ['ignore', output, 'inherit']
+    })
+  } catch (error) {
+    // grep exits with 1 when there are no matching pageviews.
+    if (error.status !== 1) {
+      throw error
+    }
+  } finally {
+    fs.closeSync(output)
+  }
 
   let counts = {}
   let max = 0
@@ -41,7 +53,7 @@ const parsePageviews = function (file, lang, project) {
   console.log('\n\n')
 
   // cleanup tmp file
-  sh.exec(`rm ${tsvOut}`)
+  fs.unlinkSync(tsvOut)
 }
 
 export default parsePageviews

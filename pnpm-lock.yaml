@@ -61,15 +61,9 @@ importers:
 
   02-fetch:
     dependencies:
-      '@inkjs/ui':
-        specifier: ^2.0.0
-        version: 2.0.0(ink@7.1.1(react@19.3.0))
-      ink:
-        specifier: ^7.1.1
-        version: 7.1.1(react@19.3.0)
-      react:
-        specifier: ^19.2.0
-        version: 19.3.0
+      spacetime:
+        specifier: ^7.15.0
+        version: 7.15.0
 
 packages:
 
@@ -1288,6 +1282,9 @@ packages:
   slice-ansi@9.0.1:
     resolution: {integrity: sha512-aBY19bn/XA+hKOKX0qL7Z0UfdBsbQvc9hn993U8ALUjzxCvDcuZqLoRXjGJrUARWAlwMnsRVD9sw2AFNOYvalA==}
     engines: {node: '>=22'}
+
+  spacetime@7.15.0:
+    resolution: {integrity: sha512-B3UuJ+3MNAbep6Ag3lEC+/KieZTY1F0QXznMAR4yERiUhlhXHoWRtf7HatOuxm5Wy7kOe9bKqpDfelXEvTk5Jw==}
 
   stack-utils@2.0.6:
     resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
@@ -2767,6 +2764,8 @@ snapshots:
     dependencies:
       ansi-styles: 6.2.3
       is-fullwidth-code-point: 5.1.0
+
+  spacetime@7.15.0: {}
 
   stack-utils@2.0.6:
     dependencies:

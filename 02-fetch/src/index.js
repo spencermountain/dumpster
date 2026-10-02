@@ -1,17 +1,16 @@
 import getPageviews from './01-pageviews/index.js'
 import getDump from './02-dump/index.js'
+import createTempDir from './lib/tmp-dir.js'
 
-const getReady = async function (opts) {
-  let { lang, project } = opts
-  opts.dir = opts.dir || process.cwd()
-  let proj = project === 'wikipedia' ? `${lang}wiki` : `${lang}${project}`
-  opts.file = opts.file || `./${proj}-latest-pages-articles.xml`
+const fetchAll = async function (opts) {
+  opts.dumpDir = opts.dumpDir || (await createTempDir())
 
   //download pageviews data?
-  if (opts.pageviews) {
-    await getPageviews(opts)
+  if (opts.pageviews === true) {
+    opts.pageviewsFile = await getPageviews(opts)
   }
-  await getDump(opts.lang, opts.project, opts.dir)
+  opts.dumpFile = await getDump(opts)
+  return opts
 }
 
-export default getReady
+export default fetchAll

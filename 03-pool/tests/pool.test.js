@@ -1,24 +1,22 @@
 import test from 'tape'
 import { rejects } from './helpers.js'
 import { execFile } from 'node:child_process'
-import { rmSync } from 'node:fs'
 import { promisify } from 'node:util'
 import { fileURLToPath } from 'node:url'
 import dumpster from '../src/index.js'
-import makeFixture from '../src/lib/fixture.js'
+import { dumpFile, expected } from './dumps.js'
 
-const fixture = makeFixture(300)
+const file = dumpFile('pages')
 const execFileAsync = promisify(execFile)
 const silentRunner = fileURLToPath(new URL('./silent-run.js', import.meta.url))
-test.onFinish(() => rmSync(fixture.dir, { recursive: true, force: true }))
 
-const base = { file: fixture.file, format: 'text', silent: true, lang: 'en' }
+const base = { file: file, format: 'text', silent: true, lang: 'en' }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 test('silent suppresses stdout and stderr for a complete run', async (t) => {
   // Exercise silence with colors enabled, without Node's conflicting-env warning.
   const env = { ...process.env, FORCE_COLOR: '1', NO_COLOR: undefined }
-  const { stdout, stderr } = await execFileAsync(process.execPath, [silentRunner, fixture.file], { env })
+  const { stdout, stderr } = await execFileAsync(process.execPath, [silentRunner, file], { env })
   t.equal(stdout, '')
   t.equal(stderr, '')
 })
@@ -30,11 +28,11 @@ test('every article arrives exactly once, across workers and partial batches', a
     pages.forEach((p) => got.push(p.title))
   })
   const stats = await pool.done
-  t.deepEqual(got.sort(), fixture.expect.articles.slice().sort())
-  t.equal(stats.written, fixture.expect.articles.length)
-  t.equal(stats.skipped_redirect, fixture.expect.redirects)
-  t.equal(stats.skipped_namespace, fixture.expect.otherNs)
-  t.equal(stats.processed, fixture.count)
+  t.deepEqual(got.sort(), expected.articles.slice().sort())
+  t.equal(stats.written, expected.articles.length)
+  t.equal(stats.skipped_redirect, expected.redirects)
+  t.equal(stats.skipped_namespace, expected.otherNs)
+  t.equal(stats.processed, expected.count)
   t.equal(stats.workers, 4)
 })
 
@@ -52,7 +50,7 @@ test('a slow async writer is awaited, never overlapped, and bounds the queue', a
   })
   const stats = await pool.done
   t.equal(maxInFlight, 1, 'one batch handed over at a time')
-  t.equal(pages, fixture.expect.articles.length)
+  t.equal(pages, expected.articles.length)
   t.ok(stats.maxQueue <= stats.workers * 2, `queue peaked at ${stats.maxQueue}`)
   t.ok(stats.parked > 0, 'workers were actually paused for the writer')
 })
@@ -64,7 +62,7 @@ test('a sync writer works with the same listener', async (t) => {
     n += pages.length // returns undefined
   })
   await pool.done
-  t.equal(n, fixture.expect.articles.length)
+  t.equal(n, expected.articles.length)
 })
 
 test('honours skip_redirect option', async (t) => {
@@ -74,7 +72,7 @@ test('honours skip_redirect option', async (t) => {
     redirects += pages.filter((p) => p.isRedirect).length
   })
   const stats = await pool.done
-  t.equal(redirects, fixture.expect.redirects)
+  t.equal(redirects, expected.redirects)
   t.equal(stats.skipped_redirect, 0)
 })
 
@@ -84,34 +82,34 @@ test('honours skip_disambig option', async (t) => {
     t.equal(pages.some((page) => page.isDisambig), false)
   })
   const stats = await pool.done
-  t.equal(stats.skipped_disambig, fixture.expect.disambig)
+  t.equal(stats.skipped_disambig, expected.disambig)
 })
 
 test('accepts numeric, boolean, and boolean-map namespace rules', async (t) => {
   const cases = [
     {
       namespace: 14,
-      written: fixture.expect.otherNs,
-      skipped: fixture.count - fixture.expect.otherNs
+      written: expected.otherNs,
+      skipped: expected.count - expected.otherNs
     },
-    { namespace: true, written: fixture.count - fixture.expect.redirects, skipped: 0 },
-    { namespace: false, written: 0, skipped: fixture.count },
+    { namespace: true, written: expected.count - expected.redirects, skipped: 0 },
+    { namespace: false, written: 0, skipped: expected.count },
     {
       namespace: { 0: false, 14: true },
-      written: fixture.expect.otherNs,
-      skipped: fixture.count - fixture.expect.otherNs
+      written: expected.otherNs,
+      skipped: expected.count - expected.otherNs
     }
   ]
-  for (const expected of cases) {
-    const pool = dumpster({ ...base, workers: 1, namespace: expected.namespace })
+  for (const rule of cases) {
+    const pool = dumpster({ ...base, workers: 1, namespace: rule.namespace })
     pool.on('batch', (pages) => {
-      if (expected.written === fixture.expect.otherNs) {
+      if (rule.written === expected.otherNs) {
         t.equal(pages.every((page) => page.ns === 14), true)
       }
     })
     const stats = await pool.done
-    t.equal(stats.written, expected.written)
-    t.equal(stats.skipped_namespace, expected.skipped)
+    t.equal(stats.written, rule.written)
+    t.equal(stats.skipped_namespace, rule.skipped)
   }
 })
 
@@ -122,7 +120,7 @@ test('flags stubs and honours skip_stub option', async (t) => {
     stubs += pages.filter((page) => page.isStub).length
   })
   const includedStats = await included.done
-  t.equal(stubs, fixture.expect.stubs)
+  t.equal(stubs, expected.stubs)
   t.equal(includedStats.skipped_stub, 0)
 
   const filtered = dumpster({ ...base, workers: 2, skip_stub: true })
@@ -130,8 +128,8 @@ test('flags stubs and honours skip_stub option', async (t) => {
     t.equal(pages.some((page) => page.isStub), false)
   })
   const filteredStats = await filtered.done
-  t.equal(filteredStats.skipped_stub, fixture.expect.stubs)
-  t.equal(filteredStats.written, fixture.expect.articles.length - fixture.expect.stubs)
+  t.equal(filteredStats.skipped_stub, expected.stubs)
+  t.equal(filteredStats.written, expected.articles.length - expected.stubs)
 })
 
 test('flags NSFW pages and optionally filters them', async (t) => {
@@ -141,7 +139,7 @@ test('flags NSFW pages and optionally filters them', async (t) => {
     nsfw += pages.filter((p) => p.isNsfw).length
   })
   const includedStats = await included.done
-  t.equal(nsfw, fixture.expect.nsfw)
+  t.equal(nsfw, expected.nsfw)
   t.equal(includedStats.skipped_nsfw, 0)
 
   const filtered = dumpster({ ...base, workers: 2, skip_nsfw: true })
@@ -149,8 +147,8 @@ test('flags NSFW pages and optionally filters them', async (t) => {
     t.equal(pages.some((p) => p.isNsfw), false)
   })
   const filteredStats = await filtered.done
-  t.equal(filteredStats.skipped_nsfw, fixture.expect.nsfw)
-  t.equal(filteredStats.written, fixture.expect.articles.length - fixture.expect.nsfw)
+  t.equal(filteredStats.skipped_nsfw, expected.nsfw)
+  t.equal(filteredStats.written, expected.articles.length - expected.nsfw)
 })
 
 test('accepts an NSFW reason skip map', async (t) => {
@@ -165,8 +163,8 @@ test('accepts an NSFW reason skip map', async (t) => {
   })
   const stats = await pool.done
   t.deepEqual(new Set(reasons), new Set(['Sexuality', 'Weapons']))
-  t.equal(reasons.length, fixture.expect.nsfw - fixture.expect.nsfwReasons['Drug-use'])
-  t.equal(stats.skipped_nsfw, fixture.expect.nsfwReasons['Drug-use'])
+  t.equal(reasons.length, expected.nsfw - expected.nsfwReasons['Drug-use'])
+  t.equal(stats.skipped_nsfw, expected.nsfwReasons['Drug-use'])
 })
 
 test('a rejecting writer aborts the run, fires error, and rejects done', async (t) => {
@@ -204,7 +202,7 @@ test('listeners attached after the call are still in place when the first batch 
   let n = 0
   pool.on('batch', (pages) => (n += pages.length))
   await pool.done
-  t.equal(n, fixture.expect.articles.length)
+  t.equal(n, expected.articles.length)
 })
 
 test('md format includes templates', async (t) => {

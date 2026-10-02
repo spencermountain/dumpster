@@ -93,7 +93,7 @@ the heartbeat prints each worker's page count, then `queue` (batches waiting for
 
 ### TypeScript
 
-the package includes declarations for `dumpster-lib`, `dumpster-lib/cli`, and `dumpster-lib/fixture`. page types are inferred from the literal `format` option, and the core types can be imported by name.
+the package includes declarations for `dumpster-lib` and `dumpster-lib/cli`. page types are inferred from the literal `format` option, and the core types can be imported by name.
 
 MIT
 
@@ -155,12 +155,3 @@ run({
 ```
 
 point the package's `bin` at that file, and `npx dumpster-disk <file> --out ./pages` inherits every core option, the guided prompts, the shared validation, and the setup/heartbeat/report UI - the plugin only describes its own extra options and its writer. a `param` has: `name` (the option key), `flags` (commander spec), `desc`, `type` (`string`/`number`/`select`/`boolean`/`path`), and optionally `required`, `guided` (include in the guided setup), `choices` (for `select`), `parse` (coercion) and `validate`.
-
-### Testing a writer
-
-`dumpster-lib/fixture` builds a tiny, realistic dump in a temp directory, for the tests of a writer library:
-
-```js
-import makeFixture from 'dumpster-lib/fixture'
-const { file, dir, expect } = makeFixture(300) // 300 pages. expect.articles lists the titles that should arrive
-```

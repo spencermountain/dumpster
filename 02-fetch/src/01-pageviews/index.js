@@ -1,15 +1,13 @@
 
-/* eslint-disable no-console */
 import downloadFile from './01-download.js'
 import decompress from './02-decompress.js'
 import parseFile from './03-parse.js'
-import { cyan } from '../_fns.js'
 
 const getPageViews = async function (opts) {
-  console.log(cyan(`\n   === Preparing Wikimedia Pageviews dataset (~500mb) ===`))
-  let file = await downloadFile(opts.dir)
+  // console.log(cyan(`\n   === Preparing Wikimedia Pageviews dataset (~500mb) ===`))
+  let bz2File = await downloadFile(opts)
 
-  let out = await decompress(file)
+  let out = await decompress(bz2File)
 
   parseFile(out, opts.lang, opts.project)
 

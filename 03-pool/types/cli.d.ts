@@ -17,9 +17,7 @@ export interface CliParam {
   type: CliParamType
   choices?: Array<string | CliChoice>
   required?: boolean
-  guided?: boolean
   parse?: (value: string) => unknown
-  validate?: (value: unknown) => string | undefined
 }
 
 export interface CliConfig<ExtraOptions extends object = Record<string, unknown>> {

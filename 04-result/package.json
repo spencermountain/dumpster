@@ -1,0 +1,17 @@
+{
+  "name": "@dumpster-lib/result",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Pageviews tools (placeholder)",
+  "exports": "./src/index.js",
+  "scripts": {
+    "watch": "node --watch --watch-preserve-output --import tsx scratch.jsx",
+    "playground": "node --import tsx scratch.jsx"
+  },
+  "dependencies": {
+    "@inkjs/ui": "^2.0.0",
+    "ink": "^7.1.1",
+    "react": "^19.2.0"
+  }
+}

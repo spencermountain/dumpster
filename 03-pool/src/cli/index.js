@@ -1,4 +1,3 @@
-import { promptParams, PromptCancelled } from './prompts.js'
 import { parseCommand } from './command.js'
 import dumpster from '../index.js'
 import defaults from '../lib/defaults.js'
@@ -9,34 +8,16 @@ import { checkOptions } from '../pool/_prep.js'
 //
 //   run({ name, description, version, params, defaults, writer })
 //
-//   params  - extra commander/Ink params, same shape as baseParams
+//   params  - extra command-line params, same shape as baseParams
 //   defaults- option overrides for this tool
 //   writer  - (pool, opts) => void   attach your 'batch'/'end' listeners here
 const run = async function (config = {}) {
-  const { program, params, chosen: passed, guided } = parseCommand(config)
-  let chosen = passed
-  const prompts = guided
-    ? params.filter((p) => p.guided)
-    : params.filter((p) => p.required && chosen[p.name] == null)
-
-  if (prompts.length > 0) {
-    if (!process.stdin.isTTY || !process.stdout.isTTY) {
-      program.error(
-        guided
-          ? 'guided setup requires a terminal; pass --file and other required options instead'
-          : `missing required option(s): ${prompts.map((p) => '--' + p.name).join(', ')}`
-      )
-    }
-    try {
-      chosen = await promptParams(prompts, chosen, config)
-    } catch (err) {
-      if (!(err instanceof PromptCancelled)) throw err
-      process.exitCode = 130
-      return
-    }
-  }
-
+  const { program, params, chosen } = parseCommand(config)
   const opts = Object.assign({}, config.defaults, chosen)
+  const missing = params.filter((param) => param.required && opts[param.name] == null)
+  if (missing.length > 0) {
+    program.error(`missing required option(s): ${missing.map((param) => '--' + param.name).join(', ')}`)
+  }
 
   // validate with the lib's own rules, so the CLI and library agree on what's valid
   try {
@@ -50,13 +31,16 @@ const run = async function (config = {}) {
   }
 
   const pool = dumpster(opts)
+  const cancelled = new Error('cancelled')
   const interrupt = () => {
     process.exitCode = 130
-    void pool.abort(new PromptCancelled())
+    void pool.abort(cancelled)
   }
   process.once('SIGINT', interrupt)
   try {
-    if (typeof config.writer === 'function') config.writer(pool, opts)
+    if (typeof config.writer === 'function') {
+      config.writer(pool, opts)
+    }
     await pool.done
     return
   } catch (err) {
@@ -65,7 +49,7 @@ const run = async function (config = {}) {
       process.stderr.write((err.message || String(err)) + '\n')
     }
     await pool.abort(err)
-    process.exitCode = err instanceof PromptCancelled ? 130 : 1
+    process.exitCode = err === cancelled ? 130 : 1
   } finally {
     process.removeListener('SIGINT', interrupt)
   }
@@ -73,4 +57,3 @@ const run = async function (config = {}) {
 
 export default run
 export { run }
-run()

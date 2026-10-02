@@ -1,20 +1,26 @@
-/* eslint-disable no-console */
-import fs from 'node:fs'
-import wget from '../_wget.js'
-import { getFileSize, elapsed } from '../_fns.js'
-import { dim } from '../_fns.js'
 
-const downloadDump = async function (file, dir, proj) {
-  // console.log(yellow(`\n\nDownloading ${proj} dump:`))
-  if (fs.existsSync(file) || fs.existsSync(file + '.bz2')) {
-    console.log(dim(`  Wikimedia dump file exists, skipping download.`))
+import wget from '../_wget.js'
+import { elapsed } from '../lib/_fns.js'
+import preFetch from '../lib/pre-fetch.js'
+
+const downloadDump = async function (opts) {
+  const { project, lang, dumpDir } = opts
+  const dumpType = 'pages-articles'
+  const dumpDate = opts.dumpDate || 'latest'
+  let name = `${lang}wiki`
+  if (project !== 'wikipedia') {
+    name = `${lang}${project}`
+  }
+
+  const file = `${name}-${dumpDate}-${dumpType}.xml.bz2`
+  let url = `https://dumps.wikimedia.org/${name}/${dumpDate}/${file}`
+  const res = await preFetch(url, 'dump', dumpDir)
+  if (!res.exists) {
     return
   }
-  let url = `https://dumps.wikimedia.org/${proj}/latest/${proj}-latest-pages-articles.xml.bz2`
-  await getFileSize(url)
 
-  let start = Date.now()
-  await wget(url, dir)
+  const start = Date.now()
+  await wget(url, dumpDir)
   elapsed(start)
 }
 

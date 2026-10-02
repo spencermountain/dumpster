@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url'
 import { checkOptions } from './_prep.js'
 import partition from './_partition.js'
 import { calc } from './_summary.js'
-import createDashboard from './_dashboard.js'
 
 const workerFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '../worker/index.js')
 
@@ -26,7 +25,6 @@ class Pool extends EventEmitter {
   constructor(opts) {
     super()
     this.opts = opts
-    this.dashboard = createDashboard()
     this.workers = []
     this.queue = [] // batches waiting for the writer
     this.parked = [] // paused workers we have not yet told to resume
@@ -57,19 +55,11 @@ class Pool extends EventEmitter {
       this.queueLimit = Math.max(1, ranges.length)
     }
     this.fileSize = fs.statSync(file).size
-    if (!this.opts.silent) {
-      this.dashboard.preRun({
-        file,
-        fileSize: this.fileSize,
-        workers: ranges.length,
-        queueLimit: this.queueLimit,
-        opts: this.opts,
-      })
-    }
     ranges.forEach((range, i) => this.spawn(i, range))
-    if (!this.opts.silent && this.opts.heartbeat > 0) {
+    if (this.opts.heartbeat > 0) {
       this.heartbeat = setInterval(() => this.beat(), this.opts.heartbeat)
     }
+    this.emit('start')
     this.writerLoop()
   }
 
@@ -180,12 +170,10 @@ class Pool extends EventEmitter {
 
   async finish() {
     clearInterval(this.heartbeat)
-    if (!this.opts.silent && this.opts.heartbeat > 0) {
+    if (this.opts.heartbeat > 0) {
       this.beat() // one last frame, so every worker shows done / 100%
     }
-    if (!this.opts.silent) {
-      this.dashboard.stop()
-    }
+    this.emit('stop')
     const stats = this.summary()
     // 'end' listeners are awaited too - flush and close your db here
     try {
@@ -194,9 +182,6 @@ class Pool extends EventEmitter {
       return this.abort(err)
     }
     await this.stopWorkers()
-    if (!this.opts.silent) {
-      this.dashboard.report(stats)
-    }
     return this.resolveDone(stats)
   }
 
@@ -206,9 +191,7 @@ class Pool extends EventEmitter {
     }
     this.error = err
     clearInterval(this.heartbeat)
-    if (!this.opts.silent) {
-      this.dashboard.stop()
-    }
+    this.emit('stop')
     this.wake()
     await this.stopWorkers()
     if (this.listenerCount('error') > 0) {
@@ -228,9 +211,7 @@ class Pool extends EventEmitter {
     const hit = this.errorTally.get(message) || { message, count: 0, title: msg.title }
     hit.count += 1
     this.errorTally.set(message, hit)
-    if (!this.opts.silent) {
-      this.dashboard.warn(this, `worker #${msg.index + 1} couldn't process '${msg.title}': ${message}`)
-    }
+    this.emit('warning', { index: msg.index, title: msg.title, message })
   }
 
   summary() {
@@ -246,12 +227,10 @@ class Pool extends EventEmitter {
     })
   }
 
-  // heartbeat status logger - a live table on a TTY, plain rows otherwise
+  // Publish progress independently of terminal rendering.
   beat() {
     this.stats.maxRss = Math.max(this.stats.maxRss, process.memoryUsage().rss)
-    if (!this.opts.silent) {
-      this.dashboard.beat(this)
-    }
+    this.emit('progress')
   }
 }
 

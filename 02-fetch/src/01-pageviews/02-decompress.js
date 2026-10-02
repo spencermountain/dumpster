@@ -1,10 +1,10 @@
 
 /* eslint-disable no-console */
-import { elapsed } from '../_fns.js'
-import sh from 'shelljs'
+import { elapsed } from '../lib/_fns.js'
+import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 import fs from 'node:fs'
-import { dim } from '../_fns.js'
+const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
 
 const getPageViews = async function (file) {
 
@@ -18,8 +18,7 @@ const getPageViews = async function (file) {
   console.log('   Decompressing pageview file: (~3mins)', 'to ' + dir)
   let start = Date.now()
 
-  let cmd = `bzip2 -d ${file}`
-  sh.exec(cmd)
+  execFileSync('bzip2', ['-d', '--', file], { stdio: 'inherit' })
 
   elapsed(start)
   return expected

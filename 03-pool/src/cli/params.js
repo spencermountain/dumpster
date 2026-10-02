@@ -1,30 +1,18 @@
-import fs from 'node:fs'
-import { formats } from '../pool/_prep.js'
-
-const fileExists = (v) => (v && fs.existsSync(v) ? undefined : `no file found at '${v}'`)
-
 const parseNamespace = function (value) {
   const normalized = value.trim().toLowerCase()
-  if (normalized === 'all' || normalized === 'true') return true
-  if (normalized === 'none' || normalized === 'false') return false
-  if (normalized.startsWith('{')) return JSON.parse(value)
+  if (normalized === 'all' || normalized === 'true') {
+    return true
+  }
+  if (normalized === 'none' || normalized === 'false') {
+    return false
+  }
+  if (normalized.startsWith('{')) {
+    return JSON.parse(value)
+  }
   return Number(value)
 }
 
-// one declarative list of the pool's options, used to drive BOTH the commander flags
-// and the Ink prompts - so a param is described in exactly one place.
-//
-// each param:
-//   name     - the dumpster() option key
-//   flags    - commander flag spec
-//   desc     - help text / prompt message
-//   type     - 'path' | 'string' | 'number' | 'select' | 'boolean'
-//   cliName  - commander's camelCase option key, when it differs from name
-//   negativeFlags / negativeDesc - optional explicit false form for a boolean
-//   choices  - for 'select'
-//   required - must be present; prompted for when missing
-//   guided   - included in the full guided setup (bare invocation, or --interactive)
-//   parse    - commander value coercion
+// Shared command-line options for the pool and writer plugins.
 const baseParams = [
   {
     name: 'file',
@@ -32,18 +20,14 @@ const baseParams = [
     desc: 'path to the unzipped .xml dump',
     type: 'path',
     required: true,
-    guided: true,
-    validate: (v) => fileExists(v),
   },
   {
     name: 'format',
     flags: '--format <name>',
     desc: 'shape of each page',
     type: 'select',
-    choices: formats,
-    guided: true,
   },
-  { name: 'lang', flags: '--lang <code>', desc: 'wiki language code (e.g. en, sw)', type: 'string', guided: true },
+  { name: 'lang', flags: '--lang <code>', desc: 'wiki language code (e.g. en, sw)', type: 'string' },
   {
     name: 'skip_redirect',
     cliName: 'skipRedirect',
@@ -52,7 +36,6 @@ const baseParams = [
     desc: 'skip redirect pages',
     negativeDesc: 'include redirect pages',
     type: 'boolean',
-    guided: true,
   },
   {
     name: 'skip_disambig',
@@ -62,7 +45,6 @@ const baseParams = [
     desc: 'skip disambiguation pages',
     negativeDesc: 'include disambiguation pages',
     type: 'boolean',
-    guided: true,
   },
   {
     name: 'skip_nsfw',
@@ -72,7 +54,6 @@ const baseParams = [
     desc: 'skip NSFW pages',
     negativeDesc: 'include NSFW pages',
     type: 'boolean',
-    guided: true,
   },
   {
     name: 'skip_stub',
@@ -82,10 +63,8 @@ const baseParams = [
     desc: 'skip stub pages',
     negativeDesc: 'include stub pages',
     type: 'boolean',
-    guided: true,
   },
 
-  // advanced - flags only, not part of the guided flow
   { name: 'project', flags: '--project <name>', desc: 'wiki project (e.g. wikipedia)', type: 'string' },
   { name: 'workers', flags: '--workers <n>', desc: 'parsing threads', type: 'number' },
   { name: 'batchPageCount', flags: '--batch-page-count <n>', desc: 'pages per batch', type: 'number' },
@@ -132,4 +111,4 @@ const passedParams = function (program, params) {
 }
 
 
-export { baseParams, applyParams, passedParams, fileExists }
+export { baseParams, applyParams, passedParams }

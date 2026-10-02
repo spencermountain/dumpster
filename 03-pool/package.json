@@ -42,10 +42,6 @@
     "./cli": {
       "types": "./types/cli.d.ts",
       "default": "./src/cli/index.js"
-    },
-    "./fixture": {
-      "types": "./types/fixture.d.ts",
-      "default": "./src/lib/fixture.js"
     }
   },
   "devDependencies": {
