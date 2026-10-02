@@ -24,11 +24,9 @@ const getPageViews = async function (opts) {
     console.log(`      ╰─ ${dim('skipped download / decompresion of pageviews')}\n`)
     return outFile
   }
-  await downloadFile(opts)
-
-  outFile = await decompress(outFile)
-
-  const jsonFile = parseFile(outFile, opts)
+  const bz2File = await downloadFile(opts)
+  outFile = await decompress(bz2File)
+  const jsonFile = await parseFile(outFile, opts)
   return jsonFile
 }
 export default getPageViews

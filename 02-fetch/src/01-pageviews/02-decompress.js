@@ -6,19 +6,18 @@ import fs from 'node:fs'
 
 const getPageViews = async function (file) {
 
-  let expected = file.replace(/\.bz2$/, '')
+  let outFile = file.replace(/\.bz2$/, '')
   const rel = path.relative(process.cwd(), file)
 
-  if (fs.existsSync(expected)) {
+  if (fs.existsSync(outFile)) {
     console.log(`\n• Pageviews file already exists`)
     console.log(`    ├─ ${green('✓')} ${dim(rel)}`)
     console.log(`    ╰─ skipping download of pageviews file`)
-    return expected
+    return outFile
   }
 
   console.log(`\n• Decompressing pageviews file`)
   console.log(`    ╰─ ${dim(rel)}`)
-  const outFile = file.replace(/\.bz2$/, '')
 
   let start = Date.now()
   execFileSync('bzip2', ['-d', '--', file], { stdio: 'inherit' })

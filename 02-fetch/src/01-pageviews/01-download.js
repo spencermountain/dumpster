@@ -20,7 +20,7 @@ const downloadFile = async function (opts) {
     const rel = path.relative(process.cwd(), bz2File)
     console.log(`\n• Pageviews file already exists`)
     console.log(`    ├─ ${green('✓')} ${dim(rel)}`)
-    console.log(`    ╰─ skipping download of pageviews file`)
+    console.log(`    ╰─ skipping download`)
     return bz2File
   }
   const domain = opts.source || 'https://dumps.wikimedia.org'
@@ -33,7 +33,7 @@ const downloadFile = async function (opts) {
   }
   const rel = path.relative(process.cwd(), bz2File)
 
-  console.log(`\n• Downloading ${ul(green('pageviews'))} data`)
+  console.log(`\n• Downloading ${ul(green('Pageviews'))} data`)
   console.log(`    ├─ ${dim(url)}`)
   console.log(`    ├─ ${dim('./' + rel)}`)
   console.log(`    ╰─ ${cyan('~' + res.estimate)} mins  ${cyan(res.size)}`)

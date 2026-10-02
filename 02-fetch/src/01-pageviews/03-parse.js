@@ -1,22 +1,20 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
-const tsvOut = './pageviews.tsv'
-const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
+import { getFileSize, round, green, dim } from '../lib/_fns.js'
 
-const round = n => Math.round(n * 10) / 10
-
-const parsePageviews = function (file, opts) {
+const parsePageviews = async function (file, opts) {
   const { lang, project } = opts
 
-  const jsonOut = file + '.json'
+  const jsonFile = file + '.json'
 
-  if (fs.existsSync(jsonOut)) {
+  if (fs.existsSync(jsonFile)) {
     console.log(dim('     Pageviews output file exists, skipping parsing.'))
-    return jsonOut
+    return jsonFile
   }
 
   //filter large pageview file down to our project-lang only
-  console.log(dim(`    parsing pageview counts`))
+  console.log(dim(`\n   •  parsing pageview counts`))
+  const tsvOut = './pageviews.tsv'
   const output = fs.openSync(tsvOut, 'w')
   try {
     execFileSync('grep', ['--', `^${lang}.${project} .* desktop `, file], {
@@ -49,16 +47,19 @@ const parsePageviews = function (file, opts) {
       total += 1
     }
   }
-  fs.writeFileSync(jsonOut, JSON.stringify(counts, null, 2))
-  console.log(`    max pageview: ${max.toLocaleString()}`)
-  console.log('    mean: ', round(total / Object.keys(counts).length))
+  fs.writeFileSync(jsonFile, JSON.stringify(counts, null, 2))
+
+  const size = await getFileSize(jsonFile)
+  console.log(`     ${dim(green('✓'))}  ${green(size)}`)
+  console.log(`      ├─ max pageview: ${max.toLocaleString()}`)
+  console.log('      ╰─  mean: ', round(total / Object.keys(counts).length))
   console.log('\n\n')
 
   // cleanup tmp file
   fs.unlinkSync(tsvOut)
   // cleanup pageviews file?
   fs.unlinkSync(file)
-  return jsonOut
+  return jsonFile
 }
 
 export default parsePageviews
