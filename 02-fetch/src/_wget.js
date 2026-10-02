@@ -1,11 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { niceFileSize } from './lib/_fns.js'
+import { niceFileSize, dim, green, yellow } from './lib/_fns.js'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-
-const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
-const yellow = (str) => '\x1b[33m' + str + '\x1b[0m'
 
 const resolveOutput = (url, output) => {
   const filename = new URL(url).pathname.split('/').pop()
@@ -85,9 +82,7 @@ const wget = async (url, output) => {
     return outFile
   }
   await fs.promises.mkdir(path.dirname(outFile), { recursive: true })
-  const done = await downloadFile(url, outFile)
-  console.log(`\n complete:`)
-  console.log(`     ${dim(outFile)}    ${yellow(niceFileSize(done))}`)
+  await downloadFile(url, outFile)
   return outFile
 }
 

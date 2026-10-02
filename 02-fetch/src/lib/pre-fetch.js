@@ -26,20 +26,13 @@ const fetchHead = async function (url) {
   }
 }
 
-const prefetch = async function (url, type, dir) {
+const prefetch = async function (url, type) {
   const res = await fetchHead(url)
   if (!res.exists) {
     console.error(`Error: cannot find ${type} file at ${url}`)
     console.error(`Please ensure this ${type} file exists on the specified wikimedia project.`)
     return res
   }
-  console.log(`Beginning download of ${green(ul(url))} ${type}`)
-  if (dir) {
-    console.log(dim(`  to : ${dir}`))
-  }
-  console.log(green(`     File size: ${cyan(res.size)}`))
-  console.log(green(`     Estimated time: ${cyan(res.estimate)}`))
-  console.log('')
   return res
 }
 

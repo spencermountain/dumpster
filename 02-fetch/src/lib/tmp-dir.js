@@ -18,7 +18,6 @@ const createTempDir = async () => {
   // await mkdir(root, { recursive: true })
   // const tmpDir = await mkdtemp(join(root, 'run-'))
   // directories.add(tmpDir)
-  console.log(`Download directory: ${tmpDir}`)
   return tmpDir
 }
 

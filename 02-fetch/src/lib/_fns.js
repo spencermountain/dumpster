@@ -23,15 +23,15 @@ export const niceFileSize = function (bytes) {
 export const getFileSize = async (file) => {
   const { size } = await stat(file)
   let nice = niceFileSize(size)
-  console.log(`${dim('File size:')} ${yellow(nice)}`)
-  return size
+  // console.log(`     ${dim(nice)}`)
+  return nice
 }
 
 export const elapsed = function (start) {
   let diff = Date.now() - start
   let mins = diff / 1000 / 60
-  let msg = `${dim('took')} ${yellow(round(mins))} ${dim('mins')}`
-  console.log(msg)
+  // console.log(`     ${dim(green('✓'))}  ${dim(round(mins) + 'mins')}`)
+  return round(mins)
 }
 
 export const encodeTitle = function (title) {
