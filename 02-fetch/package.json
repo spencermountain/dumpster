@@ -6,7 +6,8 @@
   "description": "Pageviews tools (placeholder)",
   "exports": "./src/index.js",
   "scripts": {
-    "watch": "node  scratch.js"
+    "watch": "node  scratch.js",
+    "purge": "rm -rf ./.dumpster-downloads/"
   },
   "dependencies": {
     "spacetime": "^7.15.0"

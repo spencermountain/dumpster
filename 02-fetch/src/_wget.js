@@ -1,37 +1,41 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { niceFileSize } from './lib/_fns.js'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
 
-const print = (txt) => {
+const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
+const yellow = (str) => '\x1b[33m' + str + '\x1b[0m'
+
+const resolveOutput = (url, output) => {
+  const filename = new URL(url).pathname.split('/').pop()
+  // New extensionless paths remain directories for existing callers.
+  let isDirectory = output.endsWith('/') || output.endsWith(path.sep) || !path.extname(output)
+  if (fs.existsSync(output)) {
+    isDirectory = fs.statSync(output).isDirectory()
+  }
+  return isDirectory ? path.join(output, filename) : output
+}
+
+const isDownloaded = (file) => {
+  return fs.existsSync(file) || fs.existsSync(file.replace(/\.bz2$/, ''))
+}
+
+const print = (text) => {
   if (!process.stdout.isTTY) {
     return
   }
   process.stdout.clearLine()
   process.stdout.cursorTo(0)
-  process.stdout.write(txt)
+  process.stdout.write(text)
 }
 
-const wget = async function (url, dir) {
-  let parts = new URL(url).pathname.split(/\//)
-  let filename = parts[parts.length - 1]
-  let file = path.join(dir, filename)
-  // don't clobber existing file
-  if (fs.existsSync(file) || fs.existsSync(file.replace(/\.bz2$/, ''))) {
-    console.log(dim(`\n   File exists, skipping download.`))
-    return
-  }
-  await fs.promises.mkdir(dir, { recursive: true })
-  const res = await fetch(url)
-  if (!res.ok || !res.body) {
-    await res.body?.cancel()
-    throw new Error(`Download failed: ${res.status} ${res.statusText} (${url})`)
-  }
+const trackProgress = (body, total) => {
   let done = 0
-  const total = Number(res.headers.get('content-length'))
-  const body = Readable.fromWeb(res.body)
-  body.on('data', (chunk) => (done += chunk.length))
+  const countBytes = (chunk) => {
+    done += chunk.length
+  }
+  body.on('data', countBytes)
   const timer = setInterval(() => {
     let progress = `${done} bytes`
     if (total > 0) {
@@ -39,6 +43,29 @@ const wget = async function (url, dir) {
     }
     print(progress)
   }, 1000)
+
+  const stop = () => {
+    clearInterval(timer)
+    body.off('data', countBytes)
+    print('')
+  }
+  const getBytes = () => done
+  return { stop, getBytes }
+}
+
+const fetchBody = async (url) => {
+  const response = await fetch(url)
+  if (!response.ok || !response.body) {
+    await response.body?.cancel()
+    throw new Error(`Download failed: ${response.status} ${response.statusText} (${url})`)
+  }
+  return response
+}
+
+const downloadFile = async (url, file) => {
+  const response = await fetchBody(url)
+  const body = Readable.fromWeb(response.body)
+  const progress = trackProgress(body, Number(response.headers.get('content-length')))
   try {
     await pipeline(body, fs.createWriteStream(file))
   } catch (error) {
@@ -46,9 +73,22 @@ const wget = async function (url, dir) {
     await fs.promises.rm(file, { force: true })
     throw error
   } finally {
-    clearInterval(timer)
-    print('')
+    progress.stop()
   }
+  return progress.getBytes()
+}
+
+const wget = async (url, output) => {
+  const outFile = resolveOutput(url, output)
+  if (isDownloaded(outFile)) {
+    console.log(dim(`\n   File exists, skipping download.`))
+    return outFile
+  }
+  await fs.promises.mkdir(path.dirname(outFile), { recursive: true })
+  const done = await downloadFile(url, outFile)
+  console.log(`\n complete:`)
+  console.log(`     ${dim(outFile)}    ${yellow(niceFileSize(done))}`)
+  return outFile
 }
 
 export default wget

@@ -2,6 +2,7 @@
 import downloadDump from './01-download.js'
 import decompress from './02-decompress.js'
 import { join } from 'node:path'
+import { dim } from '../lib/_fns.js'
 
 const getDump = async function (opts) {
   const { lang, project, dumpDir, dumpFile } = opts

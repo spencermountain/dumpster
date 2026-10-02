@@ -2,16 +2,8 @@ const green = (str) => '\x1b[32m' + str + '\x1b[0m'
 const cyan = (str) => '\x1b[36m' + str + '\x1b[0m'
 const ul = (str) => '\x1b[4m' + str + '\x1b[0m'
 const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
-
+import { niceFileSize, round } from './_fns.js'
 const mbPerSec = 10 //ballpark network speed
-
-const round = (n) => Math.round(n * 10) / 10
-
-const fileSize = function (bytes) {
-  const units = ['B', 'kB', 'MB', 'GB', 'TB']
-  const i = bytes == 0 ? 0 : Math.floor(Math.log(bytes) / Math.log(1024))
-  return `${Math.ceil(bytes / Math.pow(1024, i))} ${units[i]}`
-}
 
 const fetchHead = async function (url) {
   const response = await fetch(url, { method: 'head' })
@@ -29,7 +21,7 @@ const fetchHead = async function (url) {
 
   return {
     exists: true,
-    size: fileSize(bytes),
+    size: niceFileSize(bytes),
     estimate: estMinutes
   }
 }
@@ -46,7 +38,7 @@ const prefetch = async function (url, type, dir) {
     console.log(dim(`  to : ${dir}`))
   }
   console.log(green(`     File size: ${cyan(res.size)}`))
-  console.log(green(`     Estimated time: ${cyan(res.estimatedTime)}`))
+  console.log(green(`     Estimated time: ${cyan(res.estimate)}`))
   console.log('')
   return res
 }

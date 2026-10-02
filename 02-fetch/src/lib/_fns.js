@@ -1,32 +1,40 @@
-/* eslint-disable no-console */
 import { stat } from 'node:fs/promises'
 
-const sizeUnits = ['B', 'kB', 'MB', 'GB', 'TB', 'PB']
-const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
-const yellow = (str) => '\x1b[33m' + str + '\x1b[0m'
+export const green = (str) => '\x1b[32m' + str + '\x1b[0m'
+export const red = (str) => '\x1b[31m' + str + '\x1b[0m'
+export const blue = (str) => '\x1b[34m' + str + '\x1b[0m'
+export const magenta = (str) => '\x1b[35m' + str + '\x1b[0m'
+export const cyan = (str) => '\x1b[36m' + str + '\x1b[0m'
+export const yellow = (str) => '\x1b[33m' + str + '\x1b[0m'
+export const black = (str) => '\x1b[30m' + str + '\x1b[0m'
+export const b = (str) => '\x1b[1m' + str + '\x1b[0m'
+export const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
+export const i = (str) => '\x1b[3m' + str + '\x1b[0m'
+export const ul = (str) => '\x1b[4m' + str + '\x1b[0m'
 
-const round = (n) => Math.round(n * 10) / 10
+export const round = (n) => Math.round(n * 10) / 10
 
-const getFileSize = async (file) => {
+export const niceFileSize = function (bytes) {
+  const units = ['B', 'kB', 'MB', 'GB', 'TB']
+  const which = bytes == 0 ? 0 : Math.floor(Math.log(bytes) / Math.log(1024))
+  return `${Math.ceil(bytes / Math.pow(1024, which))} ${units[which]}`
+}
+
+export const getFileSize = async (file) => {
   const { size } = await stat(file)
-  let unit = 0
-  let value = size
-  for (; value >= 1000 && unit < sizeUnits.length - 1; unit += 1) {
-    value /= 1000
-  }
-  console.log(`${dim('File size:')} ${yellow(round(value))} ${dim(sizeUnits[unit])}`)
+  let nice = niceFileSize(size)
+  console.log(`${dim('File size:')} ${yellow(nice)}`)
   return size
 }
 
-const elapsed = function (start) {
+export const elapsed = function (start) {
   let diff = Date.now() - start
   let mins = diff / 1000 / 60
   let msg = `${dim('took')} ${yellow(round(mins))} ${dim('mins')}`
   console.log(msg)
 }
 
-// get ready for filename
-const encodeTitle = function (title) {
+export const encodeTitle = function (title) {
   title = title || ''
   title = title.trim()
   //titlecase it
@@ -44,4 +52,3 @@ const encodeTitle = function (title) {
   return title
 }
 
-export { elapsed, encodeTitle, getFileSize }
