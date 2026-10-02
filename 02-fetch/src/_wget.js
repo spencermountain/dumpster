@@ -38,7 +38,7 @@ const trackProgress = (body, total) => {
     if (total > 0) {
       progress = Math.floor((done / total) * 100) + '%'
     }
-    print(progress)
+    print('   ' + progress)
   }, 1000)
 
   const stop = () => {

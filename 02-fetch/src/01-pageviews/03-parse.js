@@ -5,12 +5,14 @@ const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
 
 const round = n => Math.round(n * 10) / 10
 
-const parsePageviews = function (file, lang, project) {
-  const jsonOut = `./${lang}-${project}-pageviews.json`
+const parsePageviews = function (file, opts) {
+  const { lang, project } = opts
+
+  const jsonOut = file + '.json'
 
   if (fs.existsSync(jsonOut)) {
     console.log(dim('     Pageviews output file exists, skipping parsing.'))
-    return
+    return jsonOut
   }
 
   //filter large pageview file down to our project-lang only
@@ -54,6 +56,9 @@ const parsePageviews = function (file, lang, project) {
 
   // cleanup tmp file
   fs.unlinkSync(tsvOut)
+  // cleanup pageviews file?
+  fs.unlinkSync(file)
+  return jsonOut
 }
 
 export default parsePageviews

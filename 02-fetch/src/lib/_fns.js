@@ -1,4 +1,5 @@
 import { stat } from 'node:fs/promises'
+import fs from 'node:fs'
 
 export const green = (str) => '\x1b[32m' + str + '\x1b[0m'
 export const red = (str) => '\x1b[31m' + str + '\x1b[0m'
@@ -21,6 +22,9 @@ export const niceFileSize = function (bytes) {
 }
 
 export const getFileSize = async (file) => {
+  if (!fs.existsSync(file)) {
+    return ''
+  }
   const { size } = await stat(file)
   let nice = niceFileSize(size)
   // console.log(`     ${dim(nice)}`)

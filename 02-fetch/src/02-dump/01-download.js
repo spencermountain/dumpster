@@ -22,8 +22,8 @@ const downloadDump = async function (opts) {
   if (fs.existsSync(bz2File)) {
     const rel = path.relative(process.cwd(), bz2File)
     console.log(`\n• bz2 file already exists`)
-    console.log(`     ${green('✓')} ${dim(rel)}`)
-    console.log(`      skipping download of dump`)
+    console.log(`    ├─ ${green('✓')} ${dim(rel)}`)
+    console.log(`    ╰─ skipping download of dump`)
     return bz2File
   }
   let url = `https://dumps.wikimedia.org/${name}/${dumpDate}/${file}`

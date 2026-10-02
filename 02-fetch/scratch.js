@@ -4,6 +4,6 @@ await doFetch({
   project: 'wikipedia',
   lang: 'sw',
   dumpDate: 'latest',
-  pageviews: false,
+  pageviews: true,
   cleanup: true
 })

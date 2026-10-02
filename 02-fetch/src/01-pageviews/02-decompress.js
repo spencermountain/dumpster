@@ -1,27 +1,33 @@
 
-/* eslint-disable no-console */
-import { elapsed } from '../lib/_fns.js'
+import { elapsed, getFileSize, round, green, dim } from '../lib/_fns.js'
 import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 import fs from 'node:fs'
-const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
 
 const getPageViews = async function (file) {
 
   let expected = file.replace(/\.bz2$/, '')
+  const rel = path.relative(process.cwd(), file)
+
   if (fs.existsSync(expected)) {
-    console.log(dim('   Pageviews file exists, skipping step.'))
+    console.log(`\n• Pageviews file already exists`)
+    console.log(`    ├─ ${green('✓')} ${dim(rel)}`)
+    console.log(`    ╰─ skipping download of pageviews file`)
     return expected
   }
 
-  let dir = path.parse(file).dir
-  console.log('   Decompressing pageview file: (~3mins)', 'to ' + dir)
-  let start = Date.now()
+  console.log(`\n• Decompressing pageviews file`)
+  console.log(`    ╰─ ${dim(rel)}`)
+  const outFile = file.replace(/\.bz2$/, '')
 
+  let start = Date.now()
   execFileSync('bzip2', ['-d', '--', file], { stdio: 'inherit' })
 
-  elapsed(start)
-  return expected
+  const mins = elapsed(start)
+  const size = await getFileSize(outFile)
+  console.log(`     ${dim(green('✓'))}  ${green(size)} ${dim(round(mins) + 'mins')}`)
+
+  return outFile
 }
 export default getPageViews
 
