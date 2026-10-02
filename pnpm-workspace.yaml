@@ -1,7 +1,7 @@
 packages:
-  - dialogue
-  - pageviews
-  - pool
+  - 01-cli
+  - 02-fetch
+  - 03-run
 
 allowBuilds:
   esbuild: true
