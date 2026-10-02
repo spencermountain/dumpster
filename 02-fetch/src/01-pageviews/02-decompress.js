@@ -29,6 +29,3 @@ const getPageViews = async function (file) {
   return outFile
 }
 export default getPageViews
-
-
-// getPageViews('/Users/spencer/mountain/dumpster-lib/pageviews-20240805-user.bz2')
