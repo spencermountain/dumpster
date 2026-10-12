@@ -1,24 +1,29 @@
 import { access } from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { createReadStream } from 'node:fs'
 
-const makeFileUrl = function (opts) {
-  const fileUrl = pathToFileURL(opts.localFile).href
-  return fileUrl
-}
-
-// `file:///path` or a plain path
-const fileExists = async (source) => {
-  const path = source.startsWith('file:') ? fileURLToPath(source) : source
-  await access(path)
-}
-
-const setupReader = async function (opts) {
-  const fileUrl = makeFileUrl(opts)
-  const exists = await fileExists(fileUrl)
-  if (!exists) {
-    console.error('File not found', fileUrl)
-    throw new Error('File not found')
+const toPath = (source) => {
+  if (source.startsWith('file:')) {
+    return fileURLToPath(source)
   }
-  return createReadStream(fileUrl)
+  return source
 }
+
+const fileExists = async (source) => {
+  try {
+    await access(toPath(source))
+    return true
+  } catch {
+    return false
+  }
+}
+
+const setupReader = async (opts) => {
+  const fileUrl = pathToFileURL(opts.localFile).href
+  if (!(await fileExists(fileUrl))) {
+    throw new Error(`File not found: ${fileUrl}`)
+  }
+  return createReadStream(toPath(fileUrl))
+}
+
 export default setupReader
