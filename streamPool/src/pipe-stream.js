@@ -28,7 +28,6 @@ const runStream = async (opts, gate, meter) => {
     }
     decoder.stdin.end() // download finished: let lbzip2 flush and exit
   }
-  meter.stop()
 
   pipeToDecoder().catch((error) => decoder.stdout.destroy(error)) // not awaited: the caller gets stdout right away
 

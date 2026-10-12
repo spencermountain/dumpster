@@ -13,19 +13,26 @@ const createDecoder = async function (opts) {
   if (type === 'lbzip2') {
     console.log(`using parallel lbzip2 decoder with ${maxThreads} threads`)
     const args = ['-dc', '-n', String(maxThreads)]
-    const decoder = spawn(type, args, { stdio })
+    const decoder = spawn('lbzip2', args, { stdio })
     catchErrors(decoder)
     return decoder
   }
-  if (type === 'pbzip2') {
-    console.log(`using parallel pbzip2 decoder with ${maxThreads} threads`)
+  if (type === 'pbz2') {
+    console.log(`using parallel pbz2 decoder with ${maxThreads} threads`)
+    const args = ['-d', '-c', '-n', String(maxThreads)]
+    const decoder = spawn('pbz2', args, { stdio })
+    catchErrors(decoder)
+    return decoder
+  }
+  if (type === 'pbzip2' || type === 'pbzip') {
+    console.log(`using pbzip2 decoder on non-streaming file`)
     const args = ['-d', `-p${maxThreads}`]
-    const decoder = spawn(type, args, { stdio })
+    const decoder = spawn('pbzip2', args, { stdio })
     catchErrors(decoder)
     return decoder
   }
   // slower
-  if (type === 'bzip2') {
+  if (type === 'bzip2' || type === 'bzip') {
     console.log('using slower linear bzip2 decoder')
     const args = ['-dc']
     const decoder = spawn('bzip2', args, { stdio })
@@ -39,7 +46,7 @@ const createDecoder = async function (opts) {
     return { stdin: stream, stdout: stream }
   }
   // slowest
-  if (type === 'javascript') {
+  if (type === 'javascript' || type === 'js') {
     console.log('using very-slow javascript decoder')
     const stream = unbzip2()
     return { stdin: stream, stdout: stream }
