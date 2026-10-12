@@ -9,9 +9,9 @@ const printProgress = function (txt) {
 }
 
 const streamIsFull = async function (stream) {
-  printProgress('waiting for lbzip2')
+  // printProgress('waiting for lbzip2')
   await once(stream, 'drain') // automatic pause: lbzip2 is behind
-  printProgress('running')
+  // printProgress('\n-')
 }
 
 export { printProgress, streamIsFull }
