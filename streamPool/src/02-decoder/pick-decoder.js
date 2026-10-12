@@ -5,12 +5,14 @@ const decoders = [
   'lbzip2', //older parallel one
   'pbz2', //new parallel rust one
   'fbz', //another rust one
-  'pbzip2',
-  'bzip2'
+  'pbzip2', //only parallel when multi-stream
+  'bzip2', //standard one
+  'wasm', //bzip2-codec/wasm
+  'javascript' //unbzip2-stream
 ]
 
 const checkInstalled = (lib) => {
-  if (lib === 'javascript' || lib === 'passthrough') {
+  if (lib === 'javascript' || lib === 'passthrough' || lib === 'wasm') {
     return true
   }
   const result = spawnSync(lib, ['--version'], { stdio: 'ignore' })

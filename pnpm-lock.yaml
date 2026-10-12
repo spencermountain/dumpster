@@ -70,6 +70,9 @@ importers:
       '@inkjs/ui':
         specifier: ^2.0.0
         version: 2.0.0(ink@7.1.1(react@19.3.0))
+      bzip2-codec:
+        specifier: ^2.0.1
+        version: 2.0.1
       ink:
         specifier: ^7.1.1
         version: 7.1.1(react@19.3.0)
@@ -551,6 +554,11 @@ packages:
 
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
+
+  bzip2-codec@2.0.1:
+    resolution: {integrity: sha512-Uq8+oSgpNLqONrd86ImcNrNjXCabp3turJ7P8OaUjJmuCGd6YFDMKkeVOBqqIrGPYGgrB5qwCUTD3xnz92fWtg==}
+    engines: {node: '>=22.12.0'}
+    hasBin: true
 
   call-bind-apply-helpers@1.0.2:
     resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
@@ -1837,6 +1845,8 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+
+  bzip2-codec@2.0.1: {}
 
   call-bind-apply-helpers@1.0.2:
     dependencies:

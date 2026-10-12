@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@inkjs/ui": "^2.0.0",
+    "bzip2-codec": "^2.0.1",
     "ink": "^7.1.1",
     "react": "^19.2.0",
     "unbzip2-stream": "^1.4.3",

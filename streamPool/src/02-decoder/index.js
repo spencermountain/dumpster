@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import { PassThrough } from 'node:stream'
+import { Duplex, PassThrough } from 'node:stream'
 import unbzip2 from 'unbzip2-stream'
 import pickDecoder from './pick-decoder.js'
 import catchErrors from './catchers.js'
@@ -53,6 +53,15 @@ const createDecoder = async function (opts) {
   if (type === 'passthrough') {
     console.log('using passthrough decoder')
     const stream = new PassThrough()
+    return { stdin: stream, stdout: stream }
+  }
+  // single-threaded in your current Node runtime
+  if (type === 'wasm' || type === 'bzip2-codec') {
+    const { createDecompressionStream } = await import('bzip2-codec')
+    // The codec needs Web Workers for parallel decoding.
+    const concurrency = typeof globalThis.Worker === 'function' ? maxThreads : 1
+    console.log(`using bzip2-codec WASM decoder with ${concurrency} threads`)
+    const stream = Duplex.fromWeb(createDecompressionStream({ concurrency }))
     return { stdin: stream, stdout: stream }
   }
   // slowest pure-js decoder, but works everywhere
