@@ -4,7 +4,7 @@ import makeTimer from './lib/Timer.js'
 import makeMeter from './lib/rateMeter.js'
 
 const startStream = async function (opts) {
-  const meter = makeMeter('stream').start()
+  const meter = makeMeter('stream')
   const timer = makeTimer('stream').start()
   const gate = makeGate()
 
