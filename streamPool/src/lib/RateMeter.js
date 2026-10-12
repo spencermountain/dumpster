@@ -49,6 +49,9 @@ export class RateMeter {
 
   // average rate since start()
   stat() {
+    if (!this.startTime) {
+      return
+    }
     const seconds = Math.round((Date.now() - this.startTime) / 1000)
     const rate = niceRate(this.bytes, seconds)
     const time = niceTime(seconds)

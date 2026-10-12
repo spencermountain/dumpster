@@ -1,11 +1,11 @@
 import { fetch, Agent } from 'undici'
-
+import getChecksums from './get-checksum.js'
 
  // frwiki-2026-10-01-p13159990p17639014.xml.bz2
-const makeUrl = function (opts) {
+const makeUrl = function (opts, file) {
   const { project, lang, date, host } = opts
   let proj = project === 'wikipedia' ? `${lang}wiki` : `${lang}${project}`
-  const url = `${host}/other/mediawiki_content_current/${proj}/${date}/xml/bzip2/${proj}-${date}-p2p470034.xml.bz2`
+  const url = `${host}/other/mediawiki_content_current/${proj}/${date}/xml/bzip2/${file}`
   return url
 }
 
@@ -19,7 +19,11 @@ const urlExists = async function (url) {
 }
 
 const setupReader = async function (opts) {
-  const url = makeUrl(opts)
+  // these files give us the filenames
+  let checksums = await getChecksums(opts)
+  console.log('checksums', checksums)
+
+  const url = makeUrl(opts, checksums[0].file)
   const exists = await urlExists(url)
   if (!exists) {
     console.error('URL not found', url)
