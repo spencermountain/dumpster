@@ -17,6 +17,13 @@ const createDecoder = async function (opts) {
     catchErrors(decoder)
     return decoder
   }
+  if (type === 'pbzip2') {
+    console.log(`using parallel pbzip2 decoder with ${maxThreads} threads`)
+    const args = ['-d', `-p${maxThreads}`]
+    const decoder = spawn(type, args, { stdio })
+    catchErrors(decoder)
+    return decoder
+  }
   // slower
   if (type === 'bzip2') {
     console.log('using slower linear bzip2 decoder')

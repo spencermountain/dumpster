@@ -1,9 +1,12 @@
 import { spawnSync } from 'node:child_process'
 
 // sorted by preference
-const decoders = ['lbzip2', 'bzip2']
+const decoders = ['lbzip2', 'pbzip2', 'bzip2']
 
 const checkInstalled = (lib) => {
+  if (lib === 'javascript' || lib === 'passthrough') {
+    return true
+  }
   const result = spawnSync(lib, ['--version'], { stdio: 'ignore' })
   return result.status === 0
 }
@@ -20,3 +23,5 @@ const pickDecoder = (lib) => {
   return found || 'javascript'
 }
 export default pickDecoder
+
+console.log(pickDecoder())
