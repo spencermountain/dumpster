@@ -38,7 +38,8 @@ export default [
       'regexp/prefer-w': 0,
       'regexp/prefer-range': 0,
       'regexp/no-unused-capturing-group': 0,
-      'regexp/optimal-quantifier-concatenation': 0
+      'regexp/optimal-quantifier-concatenation': 0,
+      curly: ['warn', 'all']
     }
   }
 ]
