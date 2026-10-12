@@ -24,4 +24,4 @@ const pickDecoder = (lib) => {
 }
 export default pickDecoder
 
-console.log(pickDecoder())
+// console.log(pickDecoder())
