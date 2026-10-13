@@ -16,6 +16,7 @@ class Boss extends EventEmitter {
     this.gate = makeGate() //pause/resume control
     this.managers = []
     this.workQueue = []
+    this.writeQueue = []
     this.totals = {
       pages: 0,
       skipped: 0,
@@ -36,7 +37,20 @@ class Boss extends EventEmitter {
         this.emit('error', err)
       })
       this.managers.push(manager)
+
+      // listen for ready results
+      manager.on('payload', (articles) => {
+        this.addPayload(articles)
+      })
     }
+  }
+  addPayload(payload) {
+    this.writeQueue.push(payload)
+    if (this.writeQueue.length >= 2) {
+      console.log(this.writeQueue.length, 'writequeue')
+      // this.pause()
+    }
+    this.emit('results', this.writeQueue.pop())
   }
   updateCounts() {
     this.totals = {
@@ -121,7 +135,7 @@ class Boss extends EventEmitter {
     await this.allWorkersDone()
     await Promise.all(this.managers.map((manager) => manager.calmExit()))
     console.log('  ╰ pool closed\n\n')
-    this.emit('close')
+    this.emit('done', this.totals)
   }
 }
 

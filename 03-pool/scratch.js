@@ -19,6 +19,7 @@ const opts = {
     1: false // talk
   },
   maxQueue: 5,
+  // Slow the example writer to see input pause as outstanding batches fill up.
   // decoder: 'passthrough',
   // decoder: 'javascript',
   // decoder: 'wasm',

@@ -1,9 +1,6 @@
 import { Worker } from 'node:worker_threads'
 import { EventEmitter } from 'node:events'
 
-const green = (str) => '\x1b[32m' + str + '\x1b[0m'
-const yellow = (str) => '\x1b[33m' + str + '\x1b[0m'
-
 class Manager extends EventEmitter {
   constructor(opts) {
     super()
@@ -29,11 +26,12 @@ class Manager extends EventEmitter {
       type: 'module',
       workerData: this.opts
     })
-    w.on('error', (err) => console.error('worker error:', err))
+    w.on('error', (err) => this.emit('error', err))
     w.on('exit', (code) => {
       this.state.alive = false
+      clearInterval(this.interval)
       if (code !== 0) {
-        console.error('worker stopped with exit code', code)
+        this.emit('error', new Error(`Worker ${this.index} stopped with exit code ${code}`))
       }
     })
     // listen to worker messages
@@ -49,6 +47,7 @@ class Manager extends EventEmitter {
         Object.keys(this.totals).forEach((key) => {
           this.totals[key] += counts[key]
         })
+        this.emit('payload', msg.payload)
         // console.log(`[w${this.index}]: ${green(counts.complete)} pages of ${yellow(counts.pages)}`)
       }
     })
@@ -60,28 +59,23 @@ class Manager extends EventEmitter {
   calmExit() {
     const { w } = this
     clearInterval(this.interval)
+    if (this.closing) {
+      return this.closing
+    }
     // An exited worker cannot emit another exit event.
     if (w.threadId === -1) {
       return Promise.resolve()
     }
-    return new Promise((resolve) => {
-      const wait = setInterval(() => {
-        if (this.state.queueLength === 0) {
-          clearInterval(wait)
-          this.state.alive = false
-          resolve()
-        } else {
-          // console.log(`[w${this.index}] draining queue: `, this.state.queueLength)
-        }
-      }, 2500)
+    // Wait for actual exit, not a cached queue length that excludes active work.
+    this.closing = new Promise((resolve) => {
       w.once('exit', (code) => {
         this.state.alive = false
-        clearInterval(wait)
         resolve(code)
       })
       // this fires first
       w.postMessage({ type: 'shutdown' })
     })
+    return this.closing
   }
 }
 
