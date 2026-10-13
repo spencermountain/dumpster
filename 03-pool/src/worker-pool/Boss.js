@@ -24,11 +24,20 @@ class Boss extends EventEmitter {
       this.managers.push(manager)
     }
   }
-  // pick a random worker, for now
-  assignTask(batch) {
-    const r = Math.floor(Math.random() * this.managers.length)
-    // console.log(`assigning batch to worker ${r}`)
-    this.managers[r].assign(batch)
+  smallestQueue() {
+    const sorted = [...this.managers].sort((a, b) => a.state.queueLength - b.state.queueLength)
+    const lowestQueueLength = sorted[0].state.queueLength
+    return lowestQueueLength
+  }
+  // Pick the lowest reported queue without reordering the pool.
+  async assignTask(batch) {
+    if (this.smallestQueue() >= 15) {
+      this.impatientPause()
+      // Hold this batch until capacity returns instead of dropping it.
+      await this.gate.wait()
+    }
+    const sorted = [...this.managers].sort((a, b) => a.state.queueLength - b.state.queueLength)
+    sorted[0].assign(batch)
   }
   async startStream() {
     // Keep stream errors and worker cleanup on the same promise chain.
@@ -39,9 +48,23 @@ class Boss extends EventEmitter {
     }
   }
   pause() {
+    console.log('\n   ╭ pausing')
     this.gate.pause()
   }
+  // pause, but try to resume
+  impatientPause() {
+    this.pause()
+    const waiting = setInterval(() => {
+      const queue = this.smallestQueue()
+      console.log('   | still busy - queue:', queue)
+      if (queue <= 1) {
+        clearInterval(waiting)
+        this.resume()
+      }
+    }, 1000)
+  }
   resume() {
+    console.log('   ╰ resuming')
     this.gate.resume()
   }
   async close() {

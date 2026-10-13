@@ -18,7 +18,7 @@ class Manager extends EventEmitter {
     }
     this.state = {
       alive: true,
-      idle: true
+      queueLength: 0
     }
     this.interval = setInterval(() => {
       this.w.postMessage({ type: 'ping' })

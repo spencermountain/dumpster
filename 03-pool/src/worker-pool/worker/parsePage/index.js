@@ -17,7 +17,6 @@ const parsePage = function (xml, opts) {
   //   return { skipped: true, reason: 'redirect' }
   // }
   const categories = doc.categories()
-  // console.log(categories)
   return { id, ns, title, categories }
 }
 

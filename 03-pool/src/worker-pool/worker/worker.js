@@ -40,8 +40,8 @@ parentPort.on('message', (message) => {
 
   if (type === 'task') {
     // are we building up a queue at all?
-    if (queue.length > 0) {
-      console.log(`[w${index}] queue length: ${queue.length}`)
+    if (queue.length > 4) {
+      // console.log(`[w${index}] queue length: ${queue.length}`)
       const state = makeState()
       sendStatus(state)
     }

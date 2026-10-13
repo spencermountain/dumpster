@@ -28,11 +28,15 @@ export class RateMeter {
     this.label = label
     this.bytes = 0
     this.startTime = null
+    this.lastTime = null
+    this.lastBytes = 0
   }
 
   start() {
     this.startTime = Date.now()
     this.bytes = 0
+    this.lastTime = this.startTime
+    this.lastBytes = 0
     return this
   }
   stop() {
@@ -47,13 +51,16 @@ export class RateMeter {
     this.bytes += n
   }
 
-  // average rate since start()
+  // Rate since the previous update, so a stalled reader shows zero.
   stat() {
     if (!this.startTime) {
       return
     }
-    const seconds = Math.round((Date.now() - this.startTime) / 1000)
-    const rate = niceRate(this.bytes, seconds)
+    const now = Date.now()
+    const seconds = Math.round((now - this.startTime) / 1000)
+    const rate = niceRate(this.bytes - this.lastBytes, (now - this.lastTime) / 1000)
+    this.lastTime = now
+    this.lastBytes = this.bytes
     const time = niceTime(seconds)
     const msg = `${dim(this.label || '')} ${yellow(time)} - ${green(rate)} `
     console.log(msg)
