@@ -1,5 +1,5 @@
 import makeStream from './pipe-stream.js'
-import makeGate from './lib/Gate.js'
+import makeGate from '../lib/Gate.js'
 // import makeTimer from './lib/Timer.js'
 import makeMeter from './lib/RateMeter.js'
 

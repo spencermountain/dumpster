@@ -1,5 +1,5 @@
 import startStream from './stream/index.js'
-import Boss from './worker-pool/Boss.js'
+import Boss from './Boss.js'
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 

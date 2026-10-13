@@ -1,6 +1,6 @@
-import Manager from './Manager.js'
+import Manager from './worker/Manager.js'
 import splitStream from './lib/split-stream.js'
-import makeGate from '../stream/lib/Gate.js'
+import makeGate from './lib/Gate.js'
 import { EventEmitter } from 'node:events'
 import { availableParallelism } from 'node:os'
 

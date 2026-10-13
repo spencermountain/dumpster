@@ -25,7 +25,7 @@ class Manager extends EventEmitter {
     }, 2000)
   }
   init() {
-    const w = new Worker(new URL('./worker/worker.js', import.meta.url), {
+    const w = new Worker(new URL('./worker.js', import.meta.url), {
       type: 'module',
       workerData: this.opts
     })
