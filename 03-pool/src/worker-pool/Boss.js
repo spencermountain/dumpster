@@ -24,14 +24,6 @@ class Boss extends EventEmitter {
       this.managers.push(manager)
     }
   }
-  pause() {
-    console.log('pausing boss')
-    this.gate.pause()
-  }
-  resume() {
-    console.log('resuming boss')
-    this.gate.resume()
-  }
   // pick a random worker, for now
   assignTask(batch) {
     const r = Math.floor(Math.random() * this.managers.length)
@@ -39,10 +31,12 @@ class Boss extends EventEmitter {
     this.managers[r].assign(batch)
   }
   async startStream() {
-    const p = splitStream(this.stream, this.gate, (batch) => this.assignTask(batch))
-    p.catch((err) => this.emit('error', err))
-    p.finally(() => this.close())
-    return p
+    // Keep stream errors and worker cleanup on the same promise chain.
+    try {
+      await splitStream(this.stream, this.gate, (batch) => this.assignTask(batch))
+    } finally {
+      await this.close()
+    }
   }
   pause() {
     this.gate.pause()

@@ -21,18 +21,28 @@ const splitStream = async (stream, gate, cb) => {
         currentBatch = new Uint8Array(maxBatchSize)
       }
       // Copy only what fits; a large chunk can fill several batches.
-      const length = Math.min(maxBatchSize - currentSize, bytes.length - offset)
+      const length = Math.min(currentBatch.length - currentSize, bytes.length - offset)
       currentBatch.set(bytes.subarray(offset, offset + length), currentSize)
       currentSize += length
       offset += length
-      if (currentSize >= maxBatchSize) {
+      if (currentSize === currentBatch.length) {
         // Clip after the last closing page tag.
-        const end = Buffer.from(currentBatch.buffer).lastIndexOf('</page>') + '</page>'.length
+        const lastPage = Buffer.from(currentBatch.buffer).lastIndexOf('</page>')
+        if (lastPage === -1) {
+          // A large page can fill the buffer before its closing tag arrives.
+          const larger = new Uint8Array(currentBatch.length * 2)
+          larger.set(currentBatch)
+          currentBatch = larger
+          continue
+        }
+        const end = lastPage + '</page>'.length
         await cb(currentBatch.buffer.slice(0, end))
-        await wait(50) // FIXME: artificial delay to simulate processing time
-        // Move trailing bytes to the start so the next chunk continues this batch.
-        currentBatch.copyWithin(0, end, currentSize)
-        currentSize -= end
+        // await wait(50) // FIXME: artificial delay to simulate processing time
+        // Keep the tail and return to the usual batch size after a large page.
+        const tail = currentBatch.subarray(end, currentSize)
+        currentSize = tail.length
+        currentBatch = new Uint8Array(Math.max(maxBatchSize, currentSize))
+        currentBatch.set(tail)
       }
     }
   }

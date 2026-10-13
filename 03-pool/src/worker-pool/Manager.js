@@ -20,6 +20,9 @@ class Manager extends EventEmitter {
       alive: true,
       idle: true
     }
+    this.interval = setInterval(() => {
+      this.w.postMessage({ type: 'ping' })
+    }, 2000)
   }
   init() {
     const w = new Worker(new URL('./worker/worker.js', import.meta.url), {
@@ -39,9 +42,12 @@ class Manager extends EventEmitter {
         console.log(`[w${this.index}]`, state)
         this.state = state
       } else if (type === 'payload') {
-        const { state, counts } = msg
-        this.state = state
-        console.log(`[w${this.index}]: ${green(counts.complete)} pages of ${yellow(counts.pages)}`)
+        const { counts } = msg
+        // Payloads contain counts, not a worker-state snapshot.
+        Object.keys(this.totals).forEach((key) => {
+          this.totals[key] += counts[key]
+        })
+        // console.log(`[w${this.index}]: ${green(counts.complete)} pages of ${yellow(counts.pages)}`)
       }
     })
     return w
@@ -51,6 +57,11 @@ class Manager extends EventEmitter {
   }
   calmExit() {
     const { w } = this
+    clearInterval(this.interval)
+    // An exited worker cannot emit another exit event.
+    if (w.threadId === -1) {
+      return Promise.resolve()
+    }
     return new Promise((resolve) => {
       const timer = setTimeout(() => w.terminate(), 5000)
       w.once('exit', (code) => {

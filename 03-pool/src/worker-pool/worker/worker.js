@@ -6,14 +6,17 @@ import doTask from './task.js'
 
 const opts = workerData.opts || {}
 const index = workerData.index
-handleErorrs(opts)
+handleErorrs(workerData)
 
 const queue = []
+// Keep one queue runner, and drain accepted tasks before closing the port.
+let running = false
+let closing = false
 
 const makeState = () => {
   return {
     index: workerData.index,
-    alive: true,
+    alive: !closing,
     queueLength: queue.length
   }
 }
@@ -23,6 +26,11 @@ const next = () => {
   doTask(task, opts) //synchronous
   if (queue.length) {
     setImmediate(next)
+  } else {
+    running = false
+    if (closing) {
+      parentPort.close()
+    }
   }
 }
 
@@ -38,7 +46,8 @@ parentPort.on('message', (message) => {
       sendStatus(state)
     }
     queue.push(message.task)
-    if (queue.length === 1) {
+    if (!running) {
+      running = true
       setImmediate(next)
     }
     return
@@ -49,10 +58,12 @@ parentPort.on('message', (message) => {
     return
   }
   if (type === 'shutdown') {
-    console.log(`[w${state.index}] shutting down`)
-    state.alive = false
-    sendStatus({ ...state, reason: 'shutdown' })
-    parentPort.close()
+    console.log(`[w${index}] shutting down`)
+    closing = true
+    sendStatus({ ...makeState(), reason: 'shutdown' })
+    if (!running) {
+      parentPort.close()
+    }
     return
   }
 })
