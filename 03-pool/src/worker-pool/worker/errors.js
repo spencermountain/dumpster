@@ -8,7 +8,7 @@ const tellManager = function (msg) {
 
 const init = function (workerData) {
   const { index } = workerData
-  console.log(`[w${index}]`, 'started')
+  // console.log(`[w${index}]`, 'started')
 
   // error/warning logging handling
   parentPort.on('messageerror', (err) => {
@@ -22,7 +22,7 @@ const init = function (workerData) {
     // console.log(`[w${index}] port closed`)
   })
   process.on('exit', (code) => {
-    if (code !== '0') {
+    if (code !== 0) {
       console.log(`[w${index}] exiting with code`, code)
     }
   })

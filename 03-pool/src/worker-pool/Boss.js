@@ -68,7 +68,7 @@ class Boss extends EventEmitter {
     this.gate.resume()
   }
   async close() {
-    console.log('calmly closing worker-pool')
+    console.log('\n\n-- Stream complete --\n  calmly closing worker-pool')
     await Promise.all(this.managers.map((manager) => manager.calmExit()))
     console.log('worker-pool closed')
     this.emit('close')

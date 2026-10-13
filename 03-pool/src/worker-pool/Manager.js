@@ -32,7 +32,9 @@ class Manager extends EventEmitter {
     w.on('error', (err) => console.error('worker error:', err))
     w.on('exit', (code) => {
       this.state.alive = false
-      console.log('worker exited with', code)
+      if (code !== 0) {
+        console.error('worker stopped with exit code', code)
+      }
     })
     // listen to worker messages
     w.on('message', (msg) => {
@@ -63,9 +65,18 @@ class Manager extends EventEmitter {
       return Promise.resolve()
     }
     return new Promise((resolve) => {
-      const timer = setTimeout(() => w.terminate(), 5000)
+      const wait = setInterval(() => {
+        if (this.state.queueLength === 0) {
+          clearInterval(wait)
+          this.state.alive = false
+          resolve()
+        } else {
+          // console.log(`[w${this.index}] draining queue: `, this.state.queueLength)
+        }
+      }, 2500)
       w.once('exit', (code) => {
-        clearTimeout(timer)
+        this.state.alive = false
+        clearInterval(wait)
         resolve(code)
       })
       // this fires first

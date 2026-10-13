@@ -15,10 +15,10 @@ const startStream = async function (opts) {
   }, 2000)
 
   stream.once('close', () => {
-    console.log('Stream ended')
+    // console.log('Stream ended')
     // timer.stop()
-    meter.stop()
     clearInterval(logger)
+    meter.stop()
   })
   return stream
 }

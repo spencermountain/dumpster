@@ -13,7 +13,7 @@ const opts = {
   project: 'wikipedia',
   date: '2026-10-01',
   host: 'https://dumps.wikimedia.org',
-  maxThreads: 2,
+  maxThreads: 6,
   namespaces: {
     0: true, // main
     1: false // talk

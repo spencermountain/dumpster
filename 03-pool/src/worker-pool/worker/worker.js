@@ -5,7 +5,6 @@ import { sendStatus } from './send-msg.js'
 import doTask from './task.js'
 
 const opts = workerData.opts || {}
-const index = workerData.index
 handleErorrs(workerData)
 
 const queue = []
