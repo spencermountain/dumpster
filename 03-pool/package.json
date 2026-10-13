@@ -15,6 +15,7 @@
     "ink": "^7.1.1",
     "react": "^19.2.0",
     "unbzip2-stream": "^1.4.3",
-    "undici": "^8.11.2"
+    "undici": "^8.11.2",
+    "wtf_wikipedia": "^10.4.2"
   }
 }

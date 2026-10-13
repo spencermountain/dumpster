@@ -1,4 +1,5 @@
 import parseXml from './01-xml.js'
+import wtf from 'wtf_wikipedia'
 
 const parsePage = function (xml, opts) {
   const { id, ns, title, text } = parseXml(xml)
@@ -11,7 +12,13 @@ const parsePage = function (xml, opts) {
   if (namespaces[ns] !== true) {
     return { skipped: true, reason: 'namespace' }
   }
-  return { id, ns, title }
+  const doc = wtf(text)
+  // if (!doc.isRedirect()) {
+  //   return { skipped: true, reason: 'redirect' }
+  // }
+  const categories = doc.categories()
+  // console.log(categories)
+  return { id, ns, title, categories }
 }
 
 export default parsePage

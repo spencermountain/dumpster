@@ -47,6 +47,7 @@ class Boss extends EventEmitter {
   async close() {
     console.log('calmly closing worker-pool')
     await Promise.all(this.managers.map((manager) => manager.calmExit()))
+    console.log('worker-pool closed')
     this.emit('close')
   }
 }

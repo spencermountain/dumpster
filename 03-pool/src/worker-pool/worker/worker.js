@@ -58,7 +58,7 @@ parentPort.on('message', (message) => {
     return
   }
   if (type === 'shutdown') {
-    console.log(`[w${index}] shutting down`)
+    // console.log(`[w${index}] shutting down`)
     closing = true
     sendStatus({ ...makeState(), reason: 'shutdown' })
     if (!running) {

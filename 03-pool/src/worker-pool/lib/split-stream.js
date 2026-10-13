@@ -1,12 +1,10 @@
 // Use Buffer's byte search to locate the closing page tag.
 import { Buffer } from 'node:buffer'
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+const maxBatchSize = 1024 * 1024 * 8 // 8 MiB
 
 // ingest a stream of bytes and split it into batches
 const splitStream = async (stream, gate, cb) => {
-  const maxBatchSize = 1024 * 1024 // 1 MiB
-
   // Keep a partial batch across incoming chunks.
   let currentBatch = null
   let currentSize = 0

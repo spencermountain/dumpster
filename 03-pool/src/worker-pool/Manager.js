@@ -39,7 +39,7 @@ class Manager extends EventEmitter {
       const { type } = msg
       if (type === 'status') {
         const { state } = msg
-        console.log(`[w${this.index}]`, state)
+        // console.log(`[w${this.index}]`, state)
         this.state = state
       } else if (type === 'payload') {
         const { counts } = msg
