@@ -6,6 +6,7 @@ import { availableParallelism } from 'node:os'
 
 const green = (str) => '\x1b[32m' + str + '\x1b[0m'
 const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
+const yellow = (str) => '\x1b[33m' + str + '\x1b[0m'
 
 class Boss extends EventEmitter {
   constructor(opts, stream) {
@@ -38,6 +39,12 @@ class Boss extends EventEmitter {
     }
   }
   updateCounts() {
+    this.totals = {
+      pages: 0,
+      skipped: 0,
+      complete: 0,
+      errors: 0
+    }
     this.managers.forEach((manager) => {
       this.totals.pages += manager.totals.pages
       this.totals.skipped += manager.totals.skipped
@@ -93,25 +100,27 @@ class Boss extends EventEmitter {
     this.gate.resume()
   }
 
+  // poll managers until they're all drained
   async allWorkersDone() {
-    console.log('awaiting closed workers')
     return new Promise((resolve) => {
       const waiting = setInterval(() => {
         const running = this.managers.filter((m) => m.state.queueLength > 0)
-        console.log(running.map((m) => m.state.queueLength))
         if (running.length === 0) {
           clearInterval(waiting)
           resolve()
+        } else {
+          console.log(`  | → ${yellow(running.length)} workers draining`)
         }
       }, 750)
     })
   }
   async close() {
-    console.log('\n\n-- Stream complete --\n  calmly closing worker-pool..')
-    clearInterval(this.hertbeat)
+    console.log('\n  ╭-- Stream complete --')
+    console.log('  | calmly closing worker-pool')
+    clearInterval(this.heartbeat)
     await this.allWorkersDone()
     await Promise.all(this.managers.map((manager) => manager.calmExit()))
-    console.log('worker-pool closed')
+    console.log('  ╰ pool closed\n\n')
     this.emit('close')
   }
 }

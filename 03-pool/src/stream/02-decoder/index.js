@@ -43,7 +43,7 @@ const createDecoder = async function (opts) {
   }
   // native one
   if (type === 'bzip2' || type === 'bzip') {
-    console.log('using slower linear bzip2 decoder')
+    console.log('== using slower linear bzip2 decoder ==')
     const args = ['-dc']
     const decoder = spawn('bzip2', args, { stdio })
     catchErrors(decoder)
@@ -51,7 +51,7 @@ const createDecoder = async function (opts) {
   }
   // no decoding for uncompressed files?
   if (type === 'passthrough') {
-    console.log('using passthrough decoder')
+    console.log('== using passthrough decoder ==')
     const stream = new PassThrough()
     return { stdin: stream, stdout: stream }
   }
@@ -66,7 +66,7 @@ const createDecoder = async function (opts) {
   }
   // slowest pure-js decoder, but works everywhere
   if (type === 'javascript' || type === 'js') {
-    console.log('using very-slow javascript decoder')
+    console.log('== using very-slow javascript decoder ==')
     const stream = unbzip2()
     return { stdin: stream, stdout: stream }
   }

@@ -20,7 +20,7 @@ const niceRate = (bytes, seconds) => {
 }
 
 const niceTime = (seconds) => {
-  return seconds < 60 ? `${Math.round(seconds)} s` : `${(seconds / 60).toFixed(2)} min`
+  return seconds < 60 ? `${Math.round(seconds)}s` : `${(seconds / 60).toFixed(2)}min`
 }
 
 export class RateMeter {
@@ -62,7 +62,7 @@ export class RateMeter {
     this.lastTime = now
     this.lastBytes = this.bytes
     const time = niceTime(seconds)
-    const msg = `${yellow(rate)}  ${time}`
+    const msg = `      ${yellow(rate)} @${time}`
     console.log(msg)
   }
 }
