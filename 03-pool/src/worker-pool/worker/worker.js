@@ -10,39 +10,25 @@ const state = {
   queueSize: 0
 }
 
-const queue = []
-
 handleErorrs(state)
-
-const nextTask = () => {
-  const task = queue.shift()
-  const payload = doTask(task, state) // sync work
-  sendPayload(payload, state)
-  if (queue.length) {
-    setImmediate(nextTask) //recurse
-  }
-}
 
 // listen for all messages
 parentPort.on('message', (message) => {
   const { type } = message
 
   if (type === 'ping') {
-    send.sendStatus(state)
+    sendStatus(state)
     return
   }
   if (type === 'shutdown') {
     console.log(`[w${state.index}] shutting down`)
     state.alive = false
     sendStatus({ ...state, reason: 'shutdown' })
-    setImmediate(parentPort.close())
-    // process.exit(0)
+    parentPort.close()
     return
   }
   if (type === 'task') {
-    queue.push(task)
-    if (queue.length === 1) {
-      setImmediate(nextTask)
-    }
+    const payload = doTask(message.task, state)
+    sendPayload(payload, state)
   }
 })

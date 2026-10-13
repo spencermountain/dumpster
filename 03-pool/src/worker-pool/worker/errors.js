@@ -20,10 +20,8 @@ const init = function (workerData) {
   // report graceful exit
   parentPort.on('close', () => {
     console.log(`[w${index}] port closed`)
-    tellManager('port closed')
   })
   process.on('exit', (code) => {
-    tellManager('port closed')
     console.log(`[w${index}] exiting with code`, code)
   })
   // unexpected failures

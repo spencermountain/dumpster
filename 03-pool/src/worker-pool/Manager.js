@@ -12,7 +12,7 @@ class Manager extends EventEmitter {
     }
   }
   init() {
-    const w = new Worker(new URL('./worker/index.js', import.meta.url), {
+    const w = new Worker(new URL('./worker/worker.js', import.meta.url), {
       type: 'module',
       workerData: { index: this.index }
     })
@@ -22,6 +22,9 @@ class Manager extends EventEmitter {
       console.log('worker exited with', code)
     })
     return w
+  }
+  assign(task) {
+    this.w.postMessage({ type: 'task', task }, [task])
   }
   calmExit() {
     const { w } = this

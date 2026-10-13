@@ -1,4 +1,6 @@
 import Manager from './Manager.js'
+import splitStream from './splitter.js'
+import makeGate from '../stream/lib/Gate.js'
 import { EventEmitter } from 'node:events'
 import { availableParallelism } from 'node:os'
 
@@ -7,7 +9,10 @@ class Boss extends EventEmitter {
     super()
     this.opts = opts || {}
     this.stream = stream
+    this.gate = makeGate()
     this.managers = []
+    this.workQueue = []
+    this.init()
   }
   init() {
     const numWorkers = this.opts.workerCount || availableParallelism()
@@ -15,8 +20,32 @@ class Boss extends EventEmitter {
       const manager = new Manager({ index: i })
       this.managers.push(manager)
     }
-    this.stream.on('data', (chunk) => this.emit('data', chunk))
-    this.stream.once('close', () => this.close())
+  }
+  pause() {
+    console.log('pausing boss')
+    this.gate.pause()
+  }
+  resume() {
+    console.log('resuming boss')
+    this.gate.resume()
+  }
+  assignTask(batch) {
+    // pick a random worker, for now
+    const r = Math.floor(Math.random() * this.managers.length)
+    console.log(`assigning batch to worker ${r}`)
+    this.managers[r].assign(batch)
+  }
+  async startStream() {
+    const p = splitStream(this.stream, this.gate, (batch) => this.assignTask(batch))
+    p.catch((err) => this.emit('error', err))
+    p.finally(() => this.close())
+    return p
+  }
+  pause() {
+    this.gate.pause()
+  }
+  resume() {
+    this.gate.resume()
   }
   async close() {
     await Promise.all(this.managers.map((manager) => manager.calmExit()))
