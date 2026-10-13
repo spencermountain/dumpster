@@ -1,7 +1,7 @@
 import startStream from './stream/index.js'
 import Boss from './Boss.js'
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+// const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
 const startPool = async function (opts) {
   const stream = await startStream(opts)

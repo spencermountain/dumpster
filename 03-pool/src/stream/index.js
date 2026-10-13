@@ -1,18 +1,16 @@
 import makeStream from './pipe-stream.js'
 import makeGate from '../lib/Gate.js'
-// import makeTimer from './lib/Timer.js'
 import makeMeter from './lib/RateMeter.js'
 
 const startStream = async function (opts) {
   const meter = makeMeter('stream')
-  // const timer = makeTimer('stream').start()
   const gate = makeGate()
 
   const stream = await makeStream(opts, gate, meter)
 
   const logger = setInterval(() => {
     meter.stat()
-  }, 2000)
+  }, 6000)
 
   stream.once('close', () => {
     // console.log('Stream ended')

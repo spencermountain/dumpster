@@ -3,7 +3,6 @@ import makeDecoder from './02-decoder/index.js'
 import { streamIsFull } from './lib/_lib.js'
 
 const runStream = async (opts, gate, meter) => {
-  console.log('setting up')
   // setup file or http reader stream
   const reader = await makeReader(opts, gate)
   // use flexible best-available bz2 decoder
@@ -11,7 +10,7 @@ const runStream = async (opts, gate, meter) => {
 
   // start running the stream: read from reader and write to decoder
   const pipeToDecoder = async () => {
-    console.log('running')
+    console.log('-- read-stream started --\n\n')
     meter.start()
     for await (const chunk of reader) {
       // support manual pause: parked here while paused

@@ -62,7 +62,7 @@ export class RateMeter {
     this.lastTime = now
     this.lastBytes = this.bytes
     const time = niceTime(seconds)
-    const msg = `${dim(this.label || '')} ${yellow(time)} - ${green(rate)} `
+    const msg = `${yellow(rate)}  ${time}`
     console.log(msg)
   }
 }
@@ -71,4 +71,3 @@ const makeMeter = (label) => {
   return new RateMeter(label)
 }
 export default makeMeter
-
