@@ -1,5 +1,5 @@
-import Manager from './Manager.js'
-import splitStream from './splitter.js'
+import Manager from './manager/Manager.js'
+import splitStream from './lib/splitter.js'
 import makeGate from '../stream/lib/Gate.js'
 import { EventEmitter } from 'node:events'
 import { availableParallelism } from 'node:os'
@@ -9,7 +9,7 @@ class Boss extends EventEmitter {
     super()
     this.opts = opts || {}
     this.stream = stream
-    this.gate = makeGate()
+    this.gate = makeGate() //pause/resume control
     this.managers = []
     this.workQueue = []
     this.init()
@@ -29,8 +29,8 @@ class Boss extends EventEmitter {
     console.log('resuming boss')
     this.gate.resume()
   }
+  // pick a random worker, for now
   assignTask(batch) {
-    // pick a random worker, for now
     const r = Math.floor(Math.random() * this.managers.length)
     console.log(`assigning batch to worker ${r}`)
     this.managers[r].assign(batch)

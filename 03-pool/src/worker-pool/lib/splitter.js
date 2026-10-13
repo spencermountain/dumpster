@@ -1,8 +1,11 @@
-const splitStream = async (stream, gate, send) => {
+const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+
+// ingest a stream of bytes and split it into batches
+const splitStream = async (stream, gate, cb) => {
   const maxBatchSize = 1024 * 1024 // 1 MiB
 
   // Keep a partial batch across incoming chunks.
-  let batchArray = null
+  let currentBatch = null
   let currentSize = 0
 
   for await (const chunk of stream) {
@@ -11,26 +14,27 @@ const splitStream = async (stream, gate, send) => {
     for (let offset = 0; offset < bytes.length;) {
       // Pause between batches too, since one chunk can contain several.
       await gate.wait()
-      if (!batchArray) {
-        batchArray = new Uint8Array(maxBatchSize)
+      if (!currentBatch) {
+        currentBatch = new Uint8Array(maxBatchSize)
       }
       // Copy only what fits; a large chunk can fill several batches.
       const length = Math.min(maxBatchSize - currentSize, bytes.length - offset)
-      batchArray.set(bytes.subarray(offset, offset + length), currentSize)
+      currentBatch.set(bytes.subarray(offset, offset + length), currentSize)
       currentSize += length
       offset += length
       if (currentSize >= maxBatchSize) {
         // Wait for delivery before continuing; send may transfer buffer ownership.
-        await send(batchArray.buffer)
-        batchArray = null
+        await cb(currentBatch.buffer)
+        await wait(500)
+        currentBatch = null
         currentSize = 0
       }
     }
   }
-  // Flush the final partial batch without unused trailing bytes.
+  // Flush the final partial batch
   if (currentSize > 0) {
     await gate.wait()
-    await send(batchArray.buffer.slice(0, currentSize))
+    await cb(currentBatch.buffer.slice(0, currentSize))
   }
 }
 
