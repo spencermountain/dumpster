@@ -1,5 +1,5 @@
 import Manager from './manager/Manager.js'
-import splitStream from './lib/splitter.js'
+import splitStream from './lib/split-stream.js'
 import makeGate from '../stream/lib/Gate.js'
 import { EventEmitter } from 'node:events'
 import { availableParallelism } from 'node:os'
@@ -48,6 +48,7 @@ class Boss extends EventEmitter {
     this.gate.resume()
   }
   async close() {
+    console.log('calmly closing worker-pool')
     await Promise.all(this.managers.map((manager) => manager.calmExit()))
     this.emit('close')
   }

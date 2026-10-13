@@ -25,7 +25,7 @@ const splitStream = async (stream, gate, cb) => {
       if (currentSize >= maxBatchSize) {
         // Wait for delivery before continuing; send may transfer buffer ownership.
         await cb(currentBatch.buffer)
-        await wait(500)
+        await wait(500) // FIXME: artificial delay to simulate processing time
         currentBatch = null
         currentSize = 0
       }
