@@ -29,7 +29,7 @@ const splitStream = async (stream, gate, cb) => {
         // Clip after the last closing page tag.
         const end = Buffer.from(currentBatch.buffer).lastIndexOf('</page>') + '</page>'.length
         await cb(currentBatch.buffer.slice(0, end))
-        // await wait(50) // FIXME: artificial delay to simulate processing time
+        await wait(50) // FIXME: artificial delay to simulate processing time
         // Move trailing bytes to the start so the next chunk continues this batch.
         currentBatch.copyWithin(0, end, currentSize)
         currentSize -= end

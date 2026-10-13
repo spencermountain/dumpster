@@ -12,6 +12,8 @@ const doTask = (task, opts) => {
   const counts = {
     pages: pages.length,
     skipped: 0,
+    errors: 0,
+    complete: 0,
     reasons: {}
   }
   const payload = []
@@ -25,6 +27,7 @@ const doTask = (task, opts) => {
       const reason = res.reason || 'unknown'
       counts.reasons[reason] = (counts.reasons[reason] || 0) + 1
     } else {
+      counts.complete += 1
       payload.push(res)
     }
   })

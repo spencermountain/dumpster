@@ -7,10 +7,12 @@ const startPool = async function (opts) {
   const stream = await startStream(opts)
   const boss = new Boss(opts, stream)
   boss.startStream()
-  await wait(1000)
-  boss.pause()
-  await wait(5000)
-  boss.resume()
+  // await wait(1000)
+  // console.log('====pausing==')
+  // boss.pause()
+  // await wait(2000)
+  // console.log('====resuming==')
+  // boss.resume()
   return stream
 }
 
