@@ -14,6 +14,10 @@ const opts = {
   date: '2026-10-01',
   host: 'https://dumps.wikimedia.org',
   maxThreads: 4,
+  namespaces: {
+    0: true, // main
+    1: false // talk
+  },
   // decoder: 'passthrough',
   // decoder: 'javascript',
   // decoder: 'wasm',

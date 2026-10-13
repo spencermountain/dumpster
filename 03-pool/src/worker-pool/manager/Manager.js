@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events'
 class Manager extends EventEmitter {
   constructor(opts) {
     super()
+    this.opts = opts
     this.index = opts.index
     this.w = this.init()
     this.state = {
@@ -14,7 +15,7 @@ class Manager extends EventEmitter {
   init() {
     const w = new Worker(new URL('./worker/worker.js', import.meta.url), {
       type: 'module',
-      workerData: { index: this.index }
+      workerData: this.opts
     })
     w.on('error', (err) => console.error('worker error:', err))
     w.on('exit', (code) => {

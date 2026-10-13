@@ -17,7 +17,10 @@ class Boss extends EventEmitter {
   init() {
     const numWorkers = this.opts.workerCount || availableParallelism()
     for (let i = 0; i < numWorkers; i++) {
-      const manager = new Manager({ index: i })
+      const manager = new Manager({ index: i, opts: this.opts })
+      manager.on('error', (err) => {
+        this.emit('error', err)
+      })
       this.managers.push(manager)
     }
   }
@@ -32,7 +35,7 @@ class Boss extends EventEmitter {
   // pick a random worker, for now
   assignTask(batch) {
     const r = Math.floor(Math.random() * this.managers.length)
-    console.log(`assigning batch to worker ${r}`)
+    // console.log(`assigning batch to worker ${r}`)
     this.managers[r].assign(batch)
   }
   async startStream() {

@@ -9,6 +9,7 @@ const state = {
   alive: true,
   queueSize: 0
 }
+const opts = workerData.opts || {}
 
 handleErorrs(state)
 
@@ -28,7 +29,7 @@ parentPort.on('message', (message) => {
     return
   }
   if (type === 'task') {
-    const payload = doTask(message.task, state)
-    sendPayload(payload, state)
+    const { counts, payload } = doTask(message.task, opts)
+    sendPayload(payload, counts)
   }
 })

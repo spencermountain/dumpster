@@ -1,3 +1,6 @@
+// Use Buffer's byte search to locate the closing page tag.
+import { Buffer } from 'node:buffer'
+
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
 // ingest a stream of bytes and split it into batches
@@ -23,11 +26,13 @@ const splitStream = async (stream, gate, cb) => {
       currentSize += length
       offset += length
       if (currentSize >= maxBatchSize) {
-        // Wait for delivery before continuing; send may transfer buffer ownership.
-        await cb(currentBatch.buffer)
-        await wait(500) // FIXME: artificial delay to simulate processing time
-        currentBatch = null
-        currentSize = 0
+        // Clip after the last closing page tag.
+        const end = Buffer.from(currentBatch.buffer).lastIndexOf('</page>') + '</page>'.length
+        await cb(currentBatch.buffer.slice(0, end))
+        await wait(50) // FIXME: artificial delay to simulate processing time
+        // Move trailing bytes to the start so the next chunk continues this batch.
+        currentBatch.copyWithin(0, end, currentSize)
+        currentSize -= end
       }
     }
   }
