@@ -7,16 +7,20 @@ class Manager extends EventEmitter {
     this.index = opts.index
     this.w = this.init()
     this.state = {
+      alive: true,
       idle: true
     }
   }
   init() {
-    const w = new Worker(new URL('./worker/worker.js', import.meta.url), {
+    const w = new Worker(new URL('./worker/index.js', import.meta.url), {
       type: 'module',
-      workerData: { greeting: 'hi', index: index }
+      workerData: { index: this.index }
     })
     w.on('error', (err) => console.error('worker error:', err))
-    w.on('exit', (code) => console.log('worker exited with', code))
+    w.on('exit', (code) => {
+      this.state.alive = false
+      console.log('worker exited with', code)
+    })
     return w
   }
   calmExit() {

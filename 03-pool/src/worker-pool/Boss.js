@@ -15,6 +15,12 @@ class Boss extends EventEmitter {
       const manager = new Manager({ index: i })
       this.managers.push(manager)
     }
+    this.stream.on('data', (chunk) => this.emit('data', chunk))
+    this.stream.once('close', () => this.close())
+  }
+  async close() {
+    await Promise.all(this.managers.map((manager) => manager.calmExit()))
+    this.emit('close')
   }
 }
 
