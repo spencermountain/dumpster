@@ -5,7 +5,6 @@ const decoder = new TextDecoder('utf-8')
 const doTask = (task, opts) => {
   const text = decoder.decode(task)
   const pages = text.split('</page>')
-  console.log('task:', pages.length, 'pages')
 
   // Each complete page ends before the final split fragment.
   pages.pop()
@@ -32,7 +31,8 @@ const doTask = (task, opts) => {
   // console.log(pages.length + ' pages', counts)
   // return { done: true, counts, results: payload.length }
   // sendPayload(payload, counts)
-  return { payload, counts }
+  sendPayload(payload, counts)
+  // return { payload, counts }
 }
 
 export default doTask

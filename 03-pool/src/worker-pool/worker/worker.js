@@ -10,13 +10,34 @@ const state = {
   queueSize: 0
 }
 const opts = workerData.opts || {}
-
 handleErorrs(state)
+
+const queue = []
+
+const next = () => {
+  const task = queue.shift()
+  doTask(task, opts) //synchronous
+  // const { counts, payload } = doTask(task, opts)
+  // sendPayload(payload, counts)
+  if (queue.length) {
+    setImmediate(next)
+  }
+}
 
 // listen for all messages
 parentPort.on('message', (message) => {
   const { type } = message
 
+  if (type === 'task') {
+    // are we building up?
+    if (queue.length > 0) {
+      console.log(`[w${state.index}] queue length: ${queue.length}`)
+    }
+    queue.push(message.task)
+    if (queue.length === 1) {
+      setImmediate(next)
+    }
+  }
   if (type === 'ping') {
     sendStatus(state)
     return
@@ -27,9 +48,5 @@ parentPort.on('message', (message) => {
     sendStatus({ ...state, reason: 'shutdown' })
     parentPort.close()
     return
-  }
-  if (type === 'task') {
-    const { counts, payload } = doTask(message.task, opts)
-    sendPayload(payload, counts)
   }
 })
