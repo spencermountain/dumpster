@@ -6,11 +6,13 @@ export class JobQueue {
     this.doWork = doWork // function called for each job
     this.queue = new Queue() // jobs waiting to be handled
     this.active = 0 // jobs currently being handled
+    // sums
     this.total = 0
+    this.completed = 0
     this.errors = 0
     // settings
     this.maxActive = opts.maxActive ?? 1 // max jobs in progress at once
-    this.queueWarning = opts.queueWarning // queue size threshold
+    this.warningSize = opts.warningSize // queue size threshold
     // events
     this.onDrain = null // one-time callback for when everything finishes
     this.onWarning = null //
@@ -18,8 +20,9 @@ export class JobQueue {
   // Adds one task and starts work if there's a free slot.
   push(task) {
     this.queue.add(task)
+    this.total += 1
     // are we worried now about the queue getting too big?
-    if (this.onWarning && this.queueWarning && this.queue.length > this.queueWarning) {
+    if (this.onWarning && this.warningSize && this.queue.length > this.warningSize) {
       this.onWarning(this.status)
     }
     this.next()
@@ -33,6 +36,7 @@ export class JobQueue {
       idle: this.isIdle,
       queueLength: this.queue.length,
       total: this.total,
+      completed: this.completed,
       errors: this.errors
     }
   }
@@ -47,7 +51,7 @@ export class JobQueue {
     try {
       const task = this.queue.get()
       await this.doWork(task)
-      this.total += 1
+      this.completed += 1
     } catch (e) {
       this.errors += 1
       console.error(e)
@@ -65,6 +69,10 @@ export class JobQueue {
   }
 }
 
-// const queue = new JobQueue(doTask, { maxActive: 2, queueWarning: 3 })
-// queue.onWarning = (status) => console.log('Queue warning',status)
-// queue.onDrain = (status) => console.log('Queue drained:', status)
+/*
+const queue = new JobQueue(doTask, { maxActive: 2, warningSize: 3 })
+// sticky callback
+queue.onWarning = (status) => console.log('Queue warning',status)
+// fires only once when the queue is drained
+queue.onDrain = (status) => console.log('Queue drained:', status)
+*/

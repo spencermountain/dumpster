@@ -1,6 +1,6 @@
 const defaultDelay = 1000
 
-class SimulatedWriter {
+class WriterPlugin {
   constructor(delay = defaultDelay) {
     this.delay = delay
     this.written = 0
@@ -16,4 +16,4 @@ class SimulatedWriter {
   }
 }
 
-export default SimulatedWriter
+export default WriterPlugin
