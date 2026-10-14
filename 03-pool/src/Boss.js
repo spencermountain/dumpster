@@ -1,4 +1,4 @@
-import Manager from './worker/Manager.js'
+import Manager from './pool/Manager.js'
 import splitStream from './lib/split-stream.js'
 import makeGate from './lib/Gate.js'
 import { EventEmitter } from 'node:events'

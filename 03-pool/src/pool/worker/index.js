@@ -1,6 +1,6 @@
 // worker.js
 import { parentPort, workerData } from 'node:worker_threads'
-import handleErorrs from './errors.js'
+import handleErorrs from './_errors.js'
 import { sendStatus } from './send-msg.js'
 import doTask from './task.js'
 

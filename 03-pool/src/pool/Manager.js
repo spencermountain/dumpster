@@ -22,11 +22,11 @@ class Manager extends EventEmitter {
     }, 2000)
   }
   init() {
-    const w = new Worker(new URL('./worker.js', import.meta.url), {
+    const w = new Worker(new URL('./worker/index.js', import.meta.url), {
       type: 'module',
       workerData: this.opts
     })
-    w.on('error', (err) => this.emit('error', err))
+    w.on('error', (err) => console.error('error', err))
     w.on('exit', (code) => {
       this.state.alive = false
       clearInterval(this.interval)
@@ -53,6 +53,7 @@ class Manager extends EventEmitter {
     })
     return w
   }
+  // recieve another buffer from the Boss
   assign(task) {
     this.w.postMessage({ type: 'task', task }, [task])
   }
